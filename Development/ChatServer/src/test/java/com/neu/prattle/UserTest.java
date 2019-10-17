@@ -11,16 +11,15 @@ import static org.junit.Assert.assertEquals;
 
 public class UserTest {
 
+  private final String name = "devansh";
   @Test
   public void testUserCreation() {
-    String name = "devansh";
     User user = new User(name);
     assertEquals(name, user.getName());
   }
 
   @Test
   public void testUserNameChange() {
-    String name = "devansh";
     User user = new User(name);
     assertEquals(name, user.getName());
     String changedName = "Devansh";
@@ -56,7 +55,7 @@ public class UserTest {
   @Test(expected = NoSuchUserPresentException.class)
   public void testInvalidConnectedGroups() {
     UserService userService = UserServiceImpl.getInstance();
-    User devansh = new User("devansh");
+    User devansh = new User(name);
     userService.addUser(devansh);
 
     // We are adding an invalid user which is yet not registered which should throw an exception
