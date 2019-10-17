@@ -35,8 +35,8 @@ public class GroupTest {
 
   @Test
   public void testGroupInstantiation(){
-    assertEquals(group.getGroupId(), "auto-generated-id-here");
-    assertEquals(group.getGroupName(), "FSE");
+    assertEquals( "auto-generated-id-here",group.getGroupId());
+    assertEquals("FSE", group.getGroupName());
     assertEquals(group.getUsers().toString(), users.toString());
     assertEquals(group.getAdmins().toString(), admins.toString());
   }
