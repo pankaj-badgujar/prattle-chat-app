@@ -5,7 +5,7 @@ package com.neu.prattle.exceptions;
  * a situation when the entity trying to edit the group is not an admin of that group.
  *
  * @author Harshil Mavani
- * @version dated 2019-10-14
+ * @version 1.0 dated 2019-10-14
  *
  */
 public class InvalidAdminException extends RuntimeException {

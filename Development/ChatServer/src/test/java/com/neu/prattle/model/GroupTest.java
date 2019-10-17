@@ -12,6 +12,9 @@ import static org.junit.Assert.*;
 
 /**
  * Test suite for the creation of group instances. A group is a collection of users in the system
+ *
+ * @version 1.0 dated 2019-10-16
+ * @author Harshil Mavani
  */
 public class GroupTest {
   private IGroup group;
@@ -65,6 +68,51 @@ public class GroupTest {
   public void testInvalidAddUserRequest() {
     try {
       group.addUser("Bhargavi", "Vaibhav");
+    } catch(InvalidAdminException iae) {
+      assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
+    }
+  }
+
+  @Test
+  public void testValidRemoveUserRequest() {
+    group.removeUser("Mike", "Bhargavi");
+    users.remove("Bhargavi");
+    assertEquals(group.getUsers().toString(), users.toString());
+  }
+
+  @Test
+  public void testInvalidRemoveUserRequest() {
+    try{
+      group.removeUser("Harshil", "Bhargavi");
+    } catch(InvalidAdminException iae) {
+      assertEquals("Harshil is not an admin of FSE group", iae.getMessage());
+    }
+  }
+
+  @Test
+  public void testValidRemoveAdminRequest() {
+    group.makeAdmin("Mike", "Vaibhav");
+    admins.add("Vaibhav");
+    assertEquals(group.getAdmins().toString(), admins.toString());
+
+    group.removeAdmin("Mike", "Vaibhav");
+    admins.remove("Vaibhav");
+    assertEquals(group.getAdmins().toString(), admins.toString());
+  }
+
+  @Test
+  public void testInvalidRemoveAdminRequest() {
+    try{
+      group.removeUser("Bhargavi", "Mike");
+    } catch(InvalidAdminException iae) {
+      assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
+    }
+  }
+
+  @Test
+  public void testInvalidAdminBeingRemovedRequest() {
+    try{
+      group.removeUser("Mike", "Bhargavi");
     } catch(InvalidAdminException iae) {
       assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
     }

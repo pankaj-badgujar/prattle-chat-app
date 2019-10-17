@@ -4,10 +4,11 @@ import java.util.List;
 
 /**
  * A group interface to denote all necessary functions a group must have. Each group has options to
- * edit admins and users.
+ * edit admins and users. A group consists of a number of users. Also, every group has a list of
+ * admins who enjoy special privileges to add and remove users.
  *
  * @author Harshil Mavani
- * @version dated 2019-10-26
+ * @version 1.0 dated 2019-10-26
  */
 public interface IGroup {
   /**
