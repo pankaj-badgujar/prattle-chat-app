@@ -1,11 +1,16 @@
 package com.neu.prattle.model;
 
+import com.neu.prattle.exceptions.InvalidAdminException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A class to represent a group of users. Each Group consists of a list of all of it's users
  * also, the group contains another list that denotes the admin(s) of this group.
+ *
+ * @author Harshil Mavani
+ * @version 1.0 dated 2019-10-16
  */
 public class Group implements IGroup{
   private final String groupId;
@@ -14,7 +19,7 @@ public class Group implements IGroup{
   private List<String> admins;
 
   /**
-   * A paramterized constructor that initializes all fields as required.
+   * A parameterized constructor that initializes all fields as required.
    * @param name Name of the group.
    * @param users List of users currently present in the group.
    * @param admins List of admins in the group that have privileges above normal users.
@@ -42,17 +47,20 @@ public class Group implements IGroup{
   }
 
   @Override
-  public void addUser(String user) {
+  public void addUser(String admin, String user) {
+    this.validateAdmin(admin);
     this.users.add(user);
   }
 
   @Override
-  public void removeUser(String userName) {
+  public void removeUser(String admin, String userName) {
+    this.validateAdmin(admin);
     this.users.remove(userName);
   }
 
   @Override
-  public void addAdmin(String adminName) {
+  public void addAdmin(String admin, String adminName) {
+    this.validateAdmin(admin);
     this.admins.add(adminName);
   }
 
@@ -64,5 +72,17 @@ public class Group implements IGroup{
   @Override
   public List<String> getAdmins() {
     return new ArrayList<>(this.admins);
+  }
+
+  /**
+   * A private helper method to validate the admin and make sure that the entity passed as a
+   * parameter is indeed an admin of the group.
+   * @param admin The name of the admin who needs to validated. Throws an unchecked exception
+   *              if the entity is not an admin of this group.
+   */
+  private void validateAdmin(String admin) {
+    if(!this.admins.contains(admin)) {
+      throw new InvalidAdminException(admin + " is not an admin of " + this.groupName + " group");
+    }
   }
 }

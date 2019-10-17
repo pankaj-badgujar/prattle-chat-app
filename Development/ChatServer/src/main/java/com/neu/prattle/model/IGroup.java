@@ -3,7 +3,11 @@ package com.neu.prattle.model;
 import java.util.List;
 
 /**
- * A group interface to denote all necessary functions a group must have.
+ * A group interface to denote all necessary functions a group must have. Each group has options to
+ * edit admins and users.
+ *
+ * @author Harshil Mavani
+ * @version dated 2019-10-26
  */
 public interface IGroup {
   /**
@@ -40,17 +44,17 @@ public interface IGroup {
    * A function to add a user to the current list of users present in this group.
    * @param user The new user that has to be added.
    */
-  void addUser(String user);
+  void addUser(String admin, String user);
 
   /**
    * A function to remove a user from a group.
    * @param userName name of the user that needs to be removed from the group
    */
-  void removeUser(String userName);
+  void removeUser(String admin, String userName);
 
   /**
    * A function to add to the list of already existing admins.
    * @param adminName Name of the person who wants to be an admin.
    */
-  void addAdmin(String adminName);
+  void addAdmin(String admin, String adminName);
 }
