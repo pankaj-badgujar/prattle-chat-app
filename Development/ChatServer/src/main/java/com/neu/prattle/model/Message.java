@@ -24,8 +24,8 @@ public class Message {
     public String toString() {
         return new StringBuilder()
                 .append("From: ").append(from)
-                .append("To: ").append(to)
-                .append("Content: ").append(content)
+                .append("\nTo: ").append(to)
+                .append("\nContent: ").append(content)
                 .toString();
     }
 
