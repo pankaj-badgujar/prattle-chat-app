@@ -15,7 +15,6 @@ import com.neu.prattle.model.User;
 public class SimpleTestExample {
 
 	private UserService as;
-	
 	@Before
 	public void setUp() {
 		as = UserServiceImpl.getInstance();

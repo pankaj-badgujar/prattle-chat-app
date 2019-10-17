@@ -1,5 +1,7 @@
 package com.neu.prattle.model;
 
+import com.neu.prattle.exceptions.InvalidAdminException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,16 +15,17 @@ import static org.junit.Assert.*;
  */
 public class GroupTest {
   private IGroup group;
+  private List<String> users;
+  private List<String> admins;
 
   @Before
   public void setup() {
-    List<String> users = new ArrayList<>();
+    users = new ArrayList<>();
     users.add("Harshil");
     users.add("Devansh");
     users.add("Pankaj");
-    users.add("Bhargavi");
 
-    List<String> admins = new ArrayList<>();
+    admins = new ArrayList<>();
     admins.add("Mike");
     group = new Group("FSE", users, admins);
   }
@@ -31,8 +34,39 @@ public class GroupTest {
   public void testGroupInstantiation(){
     assertEquals(group.getGroupId(), "auto-generated-id-here");
     assertEquals(group.getGroupName(), "FSE");
-
-
+    assertEquals(group.getUsers().toString(), users.toString());
+    assertEquals(group.getAdmins().toString(), admins.toString());
   }
 
+  @Test
+  public void testValidAddAdminRequest() {
+    group.makeAdmin("Mike", "Vaibhav");
+    admins.add("Vaibhav");
+    assertEquals(group.getAdmins().toString(), admins.toString());
+  }
+
+  @Test
+  public void testValidAddUserRequest() {
+    group.addUser("Mike", "Bhargavi");
+    users.add("Bhargavi");
+    assertEquals(group.getUsers().toString(), users.toString());
+  }
+
+  @Test
+  public void testInvalidAddAdminRequest() {
+    try {
+      group.makeAdmin("Bhargavi", "Vaibhav");
+    } catch(InvalidAdminException iae) {
+      assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
+    }
+  }
+
+  @Test
+  public void testInvalidAddUserRequest() {
+    try {
+      group.addUser("Bhargavi", "Vaibhav");
+    } catch(InvalidAdminException iae) {
+      assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
+    }
+  }
 }

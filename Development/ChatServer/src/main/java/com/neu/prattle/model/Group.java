@@ -59,9 +59,16 @@ public class Group implements IGroup{
   }
 
   @Override
-  public void addAdmin(String admin, String adminName) {
+  public void makeAdmin(String admin, String adminName) {
     this.validateAdmin(admin);
     this.admins.add(adminName);
+  }
+
+  @Override
+  public void removeAdmin(String admin, String adminToBeRemoved) {
+    this.validateAdmin(admin);
+    this.validateAdmin(adminToBeRemoved);
+    this.admins.remove(adminToBeRemoved);
   }
 
   @Override

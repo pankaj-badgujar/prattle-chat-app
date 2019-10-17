@@ -56,5 +56,11 @@ public interface IGroup {
    * A function to add to the list of already existing admins.
    * @param adminName Name of the person who wants to be an admin.
    */
-  void addAdmin(String admin, String adminName);
+  void makeAdmin(String admin, String adminName);
+
+  /**
+   * A function to remove from the list of already existing admins.
+   * @param adminName Name of the admin who has to be removed.
+   */
+  void removeAdmin(String admin, String adminName);
 }
