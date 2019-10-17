@@ -7,7 +7,7 @@ import java.util.List;
  */
 public interface IGroup {
   /**
-   * Retrives the unique id of this group.
+   * Retrieves the unique id of this group.
    * @return String representation of the group ID
    */
   String getGroupId();
@@ -32,10 +32,25 @@ public interface IGroup {
 
   /**
    * A function to set the group name after it has been created.
-   * @param groupName Desired new name of the group 
+   * @param groupName Desired new name of the group
    */
   void setGroupName(String groupName);
+
+  /**
+   * A function to add a user to the current list of users present in this group.
+   * @param user The new user that has to be added.
+   */
   void addUser(String user);
+
+  /**
+   * A function to remove a user from a group.
+   * @param userName name of the user that needs to be removed from the group
+   */
   void removeUser(String userName);
+
+  /**
+   * A function to add to the list of already existing admins.
+   * @param adminName Name of the person who wants to be an admin.
+   */
   void addAdmin(String adminName);
 }
