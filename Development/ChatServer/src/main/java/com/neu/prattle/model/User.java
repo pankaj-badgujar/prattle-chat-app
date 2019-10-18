@@ -4,6 +4,8 @@ import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.UserService;
 import com.neu.prattle.service.UserServiceImpl;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,18 +21,13 @@ public class User {
   private final String userID;
   private String connectedTo;
 
-  private User() {
-    connectedTo = null;
-    this.userID = UUID.randomUUID().toString();
-  }
-
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
    * name of the user.
    *
    * @param name The name of the user whose object needs to be created.
    */
-  public User(String name) {
+  public User(@JsonProperty("name") String name) {
     this.name = name;
     this.connectedTo = null;
     this.userID = UUID.randomUUID().toString();

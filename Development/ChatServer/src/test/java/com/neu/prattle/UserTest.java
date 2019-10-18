@@ -7,11 +7,14 @@ import com.neu.prattle.service.UserServiceImpl;
 
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class UserTest {
 
   private final String name = "devansh";
+
   @Test
   public void testUserCreation() {
     User user = new User(name);
@@ -60,6 +63,24 @@ public class UserTest {
 
     // We are adding an invalid user which is yet not registered which should throw an exception
     devansh.connectTo("harshil1");
+  }
+
+  @Test
+  public void testEqualUsers() {
+    User devansh = new User(name);
+
+    User duplicateDevansh = new User(name);
+
+    assertTrue(devansh.equals(duplicateDevansh));
+  }
+
+  @Test
+  public void testNotEqualUsers() {
+    User devansh = new User(name);
+
+    User duplicateDevansh = new User(name + "1");
+
+    assertFalse(devansh.equals(duplicateDevansh));
   }
 
 }
