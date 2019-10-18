@@ -33,4 +33,13 @@ public class MessageTest {
     Assert.assertEquals("From: Bhargavi\nTo: Harshil\nContent: New commit ot branch implement-group-model.", m.toString());
   }
 
+  @Test
+  public void testMessageBuilder() {
+    Message.MessageBuilder builder = Message.messageBuilder();
+    builder.setMessageContent("New commit ot branch implement-group-model.");
+    builder.setFrom("Bhargavi");
+    builder.setTo("Harshil");
+    Message message = builder.build();
+    Assert.assertEquals("From: Bhargavi\nTo: Harshil\nContent: New commit ot branch implement-group-model.", message.toString());
+  }
 }
