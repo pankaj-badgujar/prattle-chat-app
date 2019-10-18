@@ -218,4 +218,3 @@ public class ChatEndpoint {
     return sessionIdOfToUser[0];
   }
 }
-
