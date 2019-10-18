@@ -2,6 +2,9 @@ package com.neu.prattle.websocket;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.json.*;
+
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -20,5 +23,11 @@ public class MessageDecoderTest {
     assertEquals(encodedMessage,
             decoder.decode("{\"from\":null," +
                     "\"to\":null,\"content\":\"Team 6 FSE meeting\"}").toString());
+  }
+
+  @Test
+  public void testException() {
+    String encodedMessage = "{\nmessage: \"test\",\nanother: \"another\"\n}";
+    assertNull(decoder.decode(encodedMessage));
   }
 }
