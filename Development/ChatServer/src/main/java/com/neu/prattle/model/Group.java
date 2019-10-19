@@ -24,7 +24,7 @@ public class Group implements IGroup{
    * @param users List of users currently present in the group.
    * @param admins List of admins in the group that have privileges above normal users.
    */
-  Group(String name, List<String> users, List<String> admins) {
+  public Group(String name, List<String> users, List<String> admins) {
     this.groupId = "auto-generated-id-here";
     this.groupName = name;
     this.users = new ArrayList<>(users);

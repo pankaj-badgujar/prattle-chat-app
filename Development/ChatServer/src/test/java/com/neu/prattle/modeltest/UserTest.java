@@ -1,11 +1,15 @@
-package com.neu.prattle;
+package com.neu.prattle.modeltest;
 
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
+import com.neu.prattle.model.Group;
 import com.neu.prattle.model.User;
 import com.neu.prattle.service.UserService;
 import com.neu.prattle.service.UserServiceImpl;
 
+import org.junit.After;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -80,7 +84,10 @@ public class UserTest {
 
     User duplicateDevansh = new User(name + "1");
 
+    Group group = new Group("test",new ArrayList<>(),new ArrayList<>());
     assertFalse(devansh.equals(duplicateDevansh));
+    assertFalse(devansh.equals(group));
   }
+
 
 }

@@ -2,7 +2,7 @@ package com.neu.prattle.model;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.List;
+import java.util.Objects;
 
 public class UserConnector {
   private final String userFrom;
@@ -10,13 +10,10 @@ public class UserConnector {
 
   public UserConnector(@JsonProperty("userFrom") String userFrom,
                        @JsonProperty("userTo") String userTo) {
+    Objects.requireNonNull(userFrom);
+    Objects.requireNonNull(userTo);
     this.userFrom = userFrom;
     this.userTo = userTo;
-  }
-
-  public UserConnector(List<String> userPair) {
-    this.userFrom = userPair.get(0);
-    this.userTo = userPair.get(1);
   }
 
   public String getUserFrom() {

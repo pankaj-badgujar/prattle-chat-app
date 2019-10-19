@@ -1,4 +1,6 @@
-package com.neu.prattle.model;
+package com.neu.prattle.modeltest;
+
+import com.neu.prattle.model.Message;
 
 import static org.junit.Assert.*;
 
