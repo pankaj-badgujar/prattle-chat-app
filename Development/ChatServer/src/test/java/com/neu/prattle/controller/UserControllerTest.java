@@ -24,7 +24,8 @@ public class UserControllerTest extends JerseyTest {
 
   @Test
   public void testCreateDuplicateUser() {
-    Entity<String> entity = Entity.entity("{\"name\": \"Harshil\"}", MediaType.APPLICATION_JSON);
+    Entity<String> entity = Entity.entity("{\"name\": \"Harshil\"}",
+            MediaType.APPLICATION_JSON);
     target("/user/create").request().post(entity);
     entity = Entity.entity("{\"name\": \"Harshil\"}", MediaType.APPLICATION_JSON);
     Response response = target("/user/create").request().post(entity);

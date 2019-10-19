@@ -47,7 +47,7 @@ public class UserController {
     return Response.ok().build();
   }
 
-  /*@POST
+  @POST
   @Path("/connectToUsers")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response connectToUserAccounts(UserConnector users) {
@@ -63,5 +63,5 @@ public class UserController {
     }
 
     return Response.ok().build();
-  }*/
+  }
 }
