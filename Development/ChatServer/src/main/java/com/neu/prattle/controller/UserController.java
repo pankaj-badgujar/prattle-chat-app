@@ -1,6 +1,5 @@
 package com.neu.prattle.controller;
 
-import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.User;
 import com.neu.prattle.model.UserConnector;
@@ -51,17 +50,13 @@ public class UserController {
   @Path("/connectToUsers")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response connectToUserAccounts(UserConnector users) {
-    try {
-      Optional<User> fromUser = accountService.findUserByName(users.getUserFrom());
-      if (fromUser.isPresent()) {
-        fromUser.get().connectTo(users.getUserTo());
-      } else {
-        throw new NoSuchUserPresentException(users.getUserFrom());
-      }
-    } catch (NoSuchUserPresentException e) {
+    Optional<User> fromUser = accountService.findUserByName(users.getUserFrom());
+    Optional<User> toUser = accountService.findUserByName(users.getUserTo());
+    if (fromUser.isPresent() && toUser.isPresent()) {
+      fromUser.get().connectTo(users.getUserTo());
+    } else {
       return Response.status(409).build();
     }
-
     return Response.ok().build();
   }
 }

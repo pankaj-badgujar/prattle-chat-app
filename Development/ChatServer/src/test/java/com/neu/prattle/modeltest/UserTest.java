@@ -6,6 +6,8 @@ import com.neu.prattle.model.User;
 import com.neu.prattle.service.UserService;
 import com.neu.prattle.service.UserServiceImpl;
 
+import junit.framework.TestCase;
+
 import org.junit.After;
 import org.junit.Test;
 
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class UserTest {
@@ -50,7 +53,7 @@ public class UserTest {
     assertEquals(devansh.getName(), harshil.getConnectedUsers());
     assertEquals(harshilName, devansh.getConnectedUsers());
 
-    String pankajName = "Pankaj";
+    String pankajName = "Pankaj1";
     User pankaj = new User(pankajName);
     userService.addUser(pankaj);
 
@@ -62,7 +65,7 @@ public class UserTest {
   @Test(expected = NoSuchUserPresentException.class)
   public void testInvalidConnectedGroups() {
     UserService userService = UserServiceImpl.getInstance();
-    User devansh = new User(name);
+    User devansh = new User("devansh1");
     userService.addUser(devansh);
 
     // We are adding an invalid user which is yet not registered which should throw an exception
@@ -81,8 +84,12 @@ public class UserTest {
   @Test
   public void testNotEqualUsers() {
     User devansh = new User(name);
+    String devanshID = devansh.getUserID();
 
     User duplicateDevansh = new User(name + "1");
+
+    String duplicatDevanshID = duplicateDevansh.getUserID();
+    assertNotEquals(devanshID, duplicatDevanshID);
 
     Group group = new Group("test",new ArrayList<>(),new ArrayList<>());
     assertFalse(devansh.equals(duplicateDevansh));

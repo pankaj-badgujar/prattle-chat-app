@@ -16,6 +16,11 @@ public class UserConnector {
     this.userTo = userTo;
   }
 
+  public UserConnector() {
+    userFrom = null;
+    userTo = null;
+  }
+
   public String getUserFrom() {
     return userFrom;
   }

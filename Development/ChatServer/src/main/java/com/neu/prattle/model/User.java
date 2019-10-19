@@ -33,6 +33,12 @@ public class User {
     this.userID = UUID.randomUUID().toString();
   }
 
+  public User() {
+    this.name = null;
+    userID = UUID.randomUUID().toString();
+    this.connectedTo = null;
+  }
+
   /**
    * Getter method to get the name of the user attached to this object.
    *
