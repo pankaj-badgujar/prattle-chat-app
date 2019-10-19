@@ -15,8 +15,8 @@ public class GroupControllerTest extends JerseyTest {
 
   @Test
   public void testCreateNewGroup() {
-    Entity<String> entity = Entity.entity("{\"users\": \"[]\", " +
-            "\"admins\": \"[]\", \"groupId\": \"1234\", \"groupName\": \"FSE\"}",
+    Entity<String> entity = Entity.entity("{\"groupId\": \"1234\",\n \"groupName\": \"FSE\"," +
+                    "\n \"users\": [],\n \"admins\": []\n }",
             MediaType.APPLICATION_JSON);
     Response response = target("/group/create").request().post(entity);
     assertEquals(200, response.getStatus());

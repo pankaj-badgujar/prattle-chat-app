@@ -35,11 +35,7 @@ public class GroupController {
   @Path("/create")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createGroup(Group group) {
-    try {
-      groupService.createGroup(group);
-    } catch (UserAlreadyPresentException e) {
-      return Response.status(409).build();
-    }
+    groupService.createGroup(group);
     return Response.ok().build();
   }
 }
