@@ -19,8 +19,4 @@ public class NoSuchUserPresentException extends RuntimeException {
     super("User with name " + username + " does not exist.");
   }
 
-  public NoSuchUserPresentException() {
-    super();
-  }
-
 }

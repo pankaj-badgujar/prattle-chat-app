@@ -3,8 +3,8 @@ package com.neu.prattle.websocket;
 /**
  * A simple chat client based on websockets.
  *
- * @author https://github.com/eugenp/tutorials/java-websocket/src/main/java/com/baeldung/websocket/ChatEndpoint.java
- * @version dated 2017-03-05
+ * @author Devansh Gandhi
+ * @version dated 2019-10-18
  */
 
 import com.neu.prattle.model.Message;

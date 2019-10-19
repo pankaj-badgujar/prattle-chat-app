@@ -47,7 +47,7 @@ public class UserController {
     return Response.ok().build();
   }
 
-  @POST
+  /*@POST
   @Path("/connectToUsers")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response connectToUserAccounts(UserConnector users) {
@@ -59,9 +59,9 @@ public class UserController {
         throw new NoSuchUserPresentException(users.getUserFrom());
       }
     } catch (NoSuchUserPresentException e) {
-      return Response.status(409, e.getMessage()).build();
+      return Response.status(409).build();
     }
 
     return Response.ok().build();
-  }
+  }*/
 }

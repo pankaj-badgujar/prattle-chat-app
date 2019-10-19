@@ -1,5 +1,7 @@
 
 package com.neu.prattle.controller;
+import com.neu.prattle.main.PrattleApplication;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
