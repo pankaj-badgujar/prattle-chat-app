@@ -1,17 +1,15 @@
 package com.neu.prattle.service;
 
-import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.model.Group;
+
 import com.neu.prattle.model.IGroup;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class GroupServiceImpl implements GroupService {
 
   private final Set<IGroup> groups = new HashSet<>();
-  private final UserService userService = UserServiceImpl.getInstance();
   private static GroupService groupService;
 
 
@@ -27,11 +25,7 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
-  public void createGroup(String userName, String groupName) {
-    if(!userService.findUserByName(userName).isPresent()) {
-      throw new NoSuchUserPresentException("User " + userName + " is not a valid user.");
-    }
-    IGroup group = new Group(groupName, new ArrayList<>(), new ArrayList<>());
+  public void createGroup(Group group) {
     this.groups.add(group);
   }
 

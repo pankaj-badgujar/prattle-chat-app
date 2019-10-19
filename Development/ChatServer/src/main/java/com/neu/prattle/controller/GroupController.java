@@ -1,11 +1,10 @@
 package com.neu.prattle.controller;
 
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
-import com.neu.prattle.model.User;
+import com.neu.prattle.model.Group;
+
 import com.neu.prattle.service.GroupService;
 import com.neu.prattle.service.GroupServiceImpl;
-import com.neu.prattle.service.UserService;
-import com.neu.prattle.service.UserServiceImpl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -15,7 +14,7 @@ import javax.ws.rs.core.Response;
 
 /***
  * A Resource class responsible for handling CRUD operations
- * on User objects.
+ * on Group objects.
  *
  * @author Harshil Mavani
  * @version 1.0 18-10-2019
@@ -29,19 +28,18 @@ public class GroupController {
   /***
    * Handles a HTTP POST request for group creation
    *
-   * @param user -> The User object decoded from the payload of POST request.
+   * @param group -> The Group object decoded from the payload of POST request.
    * @return -> A Response indicating the outcome of the requested operation.
    */
   @POST
   @Path("/create")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response createGroup(User user) {
+  public Response createGroup(Group group) {
     try {
-//      groupService.createGroup(user);
+      groupService.createGroup(group);
     } catch (UserAlreadyPresentException e) {
       return Response.status(409).build();
     }
-
     return Response.ok().build();
   }
 }
