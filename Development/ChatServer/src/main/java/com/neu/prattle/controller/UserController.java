@@ -2,8 +2,11 @@ package com.neu.prattle.controller;
 
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.User;
+import com.neu.prattle.model.UserConnector;
 import com.neu.prattle.service.UserService;
 import com.neu.prattle.service.UserServiceImpl;
+
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -21,25 +24,39 @@ import javax.ws.rs.core.Response;
 @Path(value = "/user")
 public class UserController {
 
-    // Usually Dependency injection will be used to inject the service at run-time
-    private UserService accountService = UserServiceImpl.getInstance();
+  // Usually Dependency injection will be used to inject the service at run-time
+  private UserService accountService = UserServiceImpl.getInstance();
 
-    /***
-     * Handles a HTTP POST request for user creation
-     * 
-     * @param user -> The User object decoded from the payload of POST request.
-     * @return -> A Response indicating the outcome of the requested operation.
-     */
-    @POST
-    @Path("/create")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createUserAccount(User user) {
-        try {
-            accountService.addUser(user);
-        } catch (UserAlreadyPresentException e) {
-            return Response.status(409).build();
-        }
-
-        return Response.ok().build();
+  /***
+   * Handles a HTTP POST request for user creation
+   *
+   * @param user -> The User object decoded from the payload of POST request.
+   * @return -> A Response indicating the outcome of the requested operation.
+   */
+  @POST
+  @Path("/create")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response createUserAccount(User user) {
+    try {
+      accountService.addUser(user);
+    } catch (UserAlreadyPresentException e) {
+      return Response.status(409).build();
     }
+
+    return Response.ok().build();
+  }
+
+  @POST
+  @Path("/connectToUsers")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response connectToUserAccounts(UserConnector users) {
+    Optional<User> fromUser = accountService.findUserByName(users.getUserFrom());
+    Optional<User> toUser = accountService.findUserByName(users.getUserTo());
+    if (fromUser.isPresent() && toUser.isPresent()) {
+      fromUser.get().connectTo(users.getUserTo());
+    } else {
+      return Response.status(409).build();
+    }
+    return Response.ok().build();
+  }
 }
