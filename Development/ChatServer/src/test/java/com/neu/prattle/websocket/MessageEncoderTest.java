@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.websocket.Decoder;
+import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
@@ -43,8 +44,12 @@ public class MessageEncoderTest {
   public void testEncoding() {
     Message message = new Message();
     message.setContent("Team 6 FSE meeting");
-    assertEquals("{\"from\":null,\"to\":null,\"content\":\"Team 6 FSE meeting\"}",
-              encoder.encode(message));
+    try {
+      assertEquals("{\"from\":null,\"to\":null,\"content\":\"Team 6 FSE meeting\"}",
+                encoder.encode(message));
+    } catch (EncodeException e) {
+      e.printStackTrace();
+    }
     encoder.destroy();
   }
 }
