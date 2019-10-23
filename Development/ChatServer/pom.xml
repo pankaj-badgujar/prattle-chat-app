@@ -60,6 +60,17 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.glassfish.tyrus.bundles</groupId>
+			<artifactId>tyrus-standalone-client</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.tyrus.tests</groupId>
+			<artifactId>tyrus-test-tools</artifactId>
+			<version>1.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
 			<version>5.5.2</version>
