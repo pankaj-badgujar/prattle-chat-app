@@ -158,7 +158,7 @@ public class ChatEndpoint {
                     .sendObject(message);
           }
         } catch (EncodeException | IOException e) {
-          e.printStackTrace();
+          // Add a logger here to handle exception
         }
       }
     });

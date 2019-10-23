@@ -110,8 +110,8 @@ public class ChatEndpointTest extends TestContainer {
       try {
         ObjectMapper objectMapper = new ObjectMapper();
         session1.getBasicRemote().sendText(objectMapper.writeValueAsString("Hey"));
-        Thread.sleep(1000);
-      } catch (IOException | InterruptedException e) {
+        // Thread.sleep(1000);
+      } catch (IOException e) {
         e.printStackTrace();
       }
     }
