@@ -20,6 +20,14 @@ public class Message {
      */
     private String content;
 
+    public Message(String string) {
+        content = string;
+    }
+
+    public Message(){
+
+    }
+
     @Override
     public String toString() {
         return new StringBuilder()

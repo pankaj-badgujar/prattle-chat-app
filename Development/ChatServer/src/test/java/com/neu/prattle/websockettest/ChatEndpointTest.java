@@ -6,6 +6,7 @@ import com.neu.prattle.service.UserService;
 import com.neu.prattle.service.UserServiceImpl;
 import com.neu.prattle.websocket.ChatEndpoint;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.server.Server;
 import org.glassfish.tyrus.test.tools.TestContainer;
@@ -21,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
-import javax.websocket.EncodeException;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
@@ -79,9 +79,9 @@ public class ChatEndpointTest extends TestContainer {
       ChatEndpointClient chatEndpointClient = new ChatEndpointClient(appendable);
       clientManager.connectToServer(chatEndpointClient,
               ClientEndpointConfig.Builder.create().build(), new URI("ws://localhost:8025/e2e-test/chat/bhargavi"));
-      chatEndpointClient.sendMessage("Hey");
+      //chatEndpointClient.sendMessage("Hey");
       //assertTrue(messageLatch.await(1, TimeUnit.SECONDS));
-    } catch (IOException | URISyntaxException | EncodeException e) {
+    } catch (IOException | URISyntaxException e) {
       e.printStackTrace();
     }
     stopServer(server);
@@ -107,10 +107,13 @@ public class ChatEndpointTest extends TestContainer {
           e.printStackTrace();
         }
       });
-    }
-
-    void sendMessage(String message) throws IOException, EncodeException {
-      session1.getBasicRemote().sendText(message);
+      try {
+        ObjectMapper objectMapper = new ObjectMapper();
+        session1.getBasicRemote().sendText(objectMapper.writeValueAsString("Hey"));
+        Thread.sleep(1000);
+      } catch (IOException | InterruptedException e) {
+        e.printStackTrace();
+      }
     }
 
 
