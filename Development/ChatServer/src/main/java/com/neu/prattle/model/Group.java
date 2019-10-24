@@ -13,7 +13,7 @@ import java.util.List;
  * @version 1.0 dated 2019-10-16
  */
 public class Group implements IGroup{
-  private final String groupId;
+  private String groupId;
   private String groupName;
   private List<String> users;
   private List<String> admins;
@@ -29,6 +29,10 @@ public class Group implements IGroup{
     this.groupName = name;
     this.users = new ArrayList<>(users);
     this.admins = new ArrayList<>(admins);
+  }
+
+  public Group(){
+
   }
 
   @Override
