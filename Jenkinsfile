@@ -29,7 +29,7 @@ pipeline {
                  //echo "Building Chatter"
                  //sh 'mvn -f Development/pom.xml install'
                  echo "Building ChatServer"
-                 sh 'mvn -f Development/pom.xml compile'
+                 sh 'mvn -f Development/ChatServer/pom.xml compile'
                }
    } // build
    stage('SonarQube') {
@@ -40,8 +40,8 @@ pipeline {
      }
      steps {
       withSonarQubeEnv('SonarQube') {
-        sh 'mvn -f Development/pom.xml clean install'
-        sh 'mvn -f Development/pom.xml sonar:sonar -Dsonar.projectKey=${jobBaseName} -Dsonar.projectName=${jobBaseName}'
+        sh 'mvn -f Development/ChatServer/pom.xml clean install'
+        sh 'mvn -f Development/ChatServer/pom.xml sonar:sonar -Dsonar.projectKey=${jobBaseName} -Dsonar.projectName=${jobBaseName}'
       }
 
       sh 'sleep 30'

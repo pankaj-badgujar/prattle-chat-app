@@ -4,7 +4,6 @@ import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.User;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 

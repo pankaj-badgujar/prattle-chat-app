@@ -77,22 +77,6 @@ public class ChatEndpoint {
     }
 
     addEndpoint(session, username);
-//        Message message = createConnectedMessage(username);
-//        broadcast(message);
-  }
-
-  /**
-   * Creates a Message that some user is now connected - that is, a Session was opened
-   * successfully.
-   *
-   * @param username the username
-   * @return Message
-   */
-  private Message createConnectedMessage(String username) {
-    return Message.messageBuilder()
-            .setFrom(username)
-            .setMessageContent("Connected!")
-            .build();
   }
 
   /**
@@ -120,7 +104,6 @@ public class ChatEndpoint {
   public void onMessage(Session session, Message message) {
     String userFrom = users.get(session.getId());
     message.setFrom(userFrom);
-   // broadcast(message);
     broadcastToTheConnectUser(userFrom, message);
   }
 
@@ -138,7 +121,6 @@ public class ChatEndpoint {
     Message message = new Message();
     message.setFrom(users.get(session.getId()));
     message.setContent("Disconnected!");
-    //broadcast(message);
   }
 
   /**
@@ -152,32 +134,6 @@ public class ChatEndpoint {
   @OnError
   public void onError(Session session, Throwable throwable) {
     // Do error handling here
-  }
-
-  /**
-   * Broadcast.
-   *
-   * Send a Message to each session in the pool of sessions.
-   * The Message sending action is synchronized.  That is, if another
-   * Message tries to be sent at the same time to the same endpoint,
-   * it is blocked until this Message finishes being sent..
-   *
-   * @param message
-   */
-  private static void broadcast(Message message) {
-    chatEndpoints.forEach(endpoint -> {
-      synchronized (endpoint) {
-        try {
-          endpoint.session.getBasicRemote()
-                  .sendObject(message);
-        } catch (IOException | EncodeException e) {
-          /* note: in production, who exactly is looking at the console.  This exception's
-           *       output should be moved to a logger.
-           */
-          e.printStackTrace();
-        }
-      }
-    });
   }
 
   private void broadcastToTheConnectUser(String userFrom, Message message) {
@@ -202,7 +158,7 @@ public class ChatEndpoint {
                     .sendObject(message);
           }
         } catch (EncodeException | IOException e) {
-          e.printStackTrace();
+          // Add a logger here to handle exception
         }
       }
     });

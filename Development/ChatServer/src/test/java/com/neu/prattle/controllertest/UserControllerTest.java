@@ -1,7 +1,7 @@
 
 package com.neu.prattle.controllertest;
+
 import com.neu.prattle.controller.UserController;
-import com.neu.prattle.main.PrattleApplication;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -45,8 +45,8 @@ public class UserControllerTest extends JerseyTest {
             MediaType.APPLICATION_JSON);
     target("/user/create").request().post(entityPankaj);
     JSONObject jsonObject = new JSONObject();
-    jsonObject.put("userFrom","devansh");
-    jsonObject.put("userTo","pankaj");
+    jsonObject.put("userFrom", "devansh");
+    jsonObject.put("userTo", "pankaj");
     Entity<String> entity = Entity.entity(jsonObject.toString(),
             MediaType.APPLICATION_JSON);
     Response response = target("/user/connectToUsers").request().post(entity);
@@ -58,10 +58,11 @@ public class UserControllerTest extends JerseyTest {
 
     Entity<String> entityDevansh = Entity.entity("{\"name\": \"devansh\"}",
             MediaType.APPLICATION_JSON);
-    target("/user/create").request().post(entityDevansh);;
+    target("/user/create").request().post(entityDevansh);
+    ;
     JSONObject jsonObject = new JSONObject();
-    jsonObject.put("userFrom","devansh");
-    jsonObject.put("userTo","pankaj");
+    jsonObject.put("userFrom", "devansh");
+    jsonObject.put("userTo", "pankaj");
     Entity<String> entity = Entity.entity(jsonObject.toString(),
             MediaType.APPLICATION_JSON);
     Response response = target("/user/connectToUsers").request().post(entity);
