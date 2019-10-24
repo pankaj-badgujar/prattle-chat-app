@@ -3,9 +3,9 @@ package com.neu.prattle.service;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.User;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /***
  * Implementation of {@link UserService}
@@ -18,48 +18,49 @@ import java.util.Set;
  */
 public class UserServiceImpl implements UserService {
 
-    /***
-     * UserServiceImpl is a Singleton class.
-     */
-    private UserServiceImpl() {
+  /***
+   * UserServiceImpl is a Singleton class.
+   */
+  private UserServiceImpl() {
 
+  }
+
+  private static UserService accountService;
+
+  static {
+    accountService = new UserServiceImpl();
+  }
+
+  /**
+   * Call this method to return an instance of this service.
+   *
+   * @return this
+   */
+  public static UserService getInstance() {
+    return accountService;
+  }
+
+  private List<User> userSet = new ArrayList<>();
+
+  /**
+   * @param name -> The name of the user.
+   * @return An optional wrapper supplying the user.
+   */
+  @Override
+  public Optional<User> findUserByName(String name) {
+    final User user = new User(name);
+    if (userSet.contains(user)) {
+      return Optional.of(userSet.get(userSet.indexOf(user)));
+    } else {
+      return Optional.empty();
     }
+  }
 
-    private static UserService accountService;
+  @Override
+  public synchronized void addUser(User user) {
+    if (userSet.contains(user))
+      throw new UserAlreadyPresentException(String.format("User already present with name: %s", user.getName()));
 
-    static {
-        accountService = new UserServiceImpl();
-    }
-
-    /**
-     * Call this method to return an instance of this service.
-     * @return this
-     */
-    public static UserService getInstance() {
-        return accountService;
-    }
-
-    private Set<User> userSet = new HashSet<>();
-
-    /***
-     *
-     * @param name -> The name of the user.
-     * @return An optional wrapper supplying the user.
-     */
-    @Override
-    public Optional<User> findUserByName(String name) {
-        final User user = new User(name);
-        if (userSet.contains(user))
-            return Optional.of(user);
-        else
-            return Optional.empty();
-    }
-
-    @Override
-    public synchronized void addUser(User user) {
-        if (userSet.contains(user))
-            throw new UserAlreadyPresentException(String.format("User already present with name: %s", user.getName()));
-
-        userSet.add(user);
-    }
+    userSet.add(user);
+  }
 }
