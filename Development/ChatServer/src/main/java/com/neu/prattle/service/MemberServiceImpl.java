@@ -26,4 +26,12 @@ public class MemberServiceImpl implements MemberService {
       throw new UserAlreadyPresentException(String.format("User already present with name: %s", user.getName()));
     this.members.add(user);
   }
+
+  /**
+   * Call this method to return an instance of this service.
+   * @return this
+   */
+  public static MemberService getInstance() {
+    return memberService;
+  }
 }

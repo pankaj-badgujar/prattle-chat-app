@@ -1,6 +1,5 @@
 package com.neu.prattle.controller;
 
-import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 
 import com.neu.prattle.service.GroupService;

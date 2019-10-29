@@ -7,7 +7,6 @@ package com.neu.prattle.websocket;
  * @version dated 2019-10-18
  */
 
-import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.Message;
 import com.neu.prattle.model.User;
 import com.neu.prattle.service.UserService;
