@@ -33,7 +33,7 @@ public class UserControllerTest extends JerseyTest {
     target("/user/create").request().post(entity);
     entity = Entity.entity("{\"name\": \"Harshil\"}", MediaType.APPLICATION_JSON);
     Response response = target("/user/create").request().post(entity);
-    assertEquals(500, response.getStatus());
+    assertEquals(409, response.getStatus());
   }
 
   @Test
