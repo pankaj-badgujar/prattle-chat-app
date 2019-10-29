@@ -79,8 +79,6 @@ public class ChatEndpointTest extends TestContainer {
       ChatEndpointClient chatEndpointClient = new ChatEndpointClient(appendable);
       clientManager.connectToServer(chatEndpointClient,
               ClientEndpointConfig.Builder.create().build(), new URI("ws://localhost:8025/e2e-test/chat/bhargavi"));
-      //chatEndpointClient.sendMessage("Hey");
-      //assertTrue(messageLatch.await(1, TimeUnit.SECONDS));
     } catch (IOException | URISyntaxException e) {
       e.printStackTrace();
     }
@@ -110,7 +108,6 @@ public class ChatEndpointTest extends TestContainer {
       try {
         ObjectMapper objectMapper = new ObjectMapper();
         session1.getBasicRemote().sendText(objectMapper.writeValueAsString("Hey"));
-        // Thread.sleep(1000);
       } catch (IOException e) {
         e.printStackTrace();
       }

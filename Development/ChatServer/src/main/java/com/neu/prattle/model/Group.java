@@ -3,6 +3,7 @@ package com.neu.prattle.model;
 import com.neu.prattle.exceptions.InvalidAdminException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,11 +13,14 @@ import java.util.List;
  * @author Harshil Mavani
  * @version 1.0 dated 2019-10-16
  */
-public class Group implements IGroup{
-  private String groupId;
-  private String groupName;
+public class Group extends AbstractMember implements IGroup {
   private List<String> users;
   private List<String> admins;
+
+  @Override
+  public List<String> getName() {
+    return Collections.singletonList(this.name);
+  }
 
   /**
    * A parameterized constructor that initializes all fields as required.
@@ -25,29 +29,13 @@ public class Group implements IGroup{
    * @param admins List of admins in the group that have privileges above normal users.
    */
   public Group(String name, List<String> users, List<String> admins) {
-    this.groupId = "auto-generated-id-here";
-    this.groupName = name;
+    this.setName(name);
     this.users = new ArrayList<>(users);
     this.admins = new ArrayList<>(admins);
   }
 
-  public Group(){
+  public Group() {
 
-  }
-
-  @Override
-  public String getGroupName() {
-    return this.groupName;
-  }
-
-  @Override
-  public void setGroupName(String groupName) {
-    this.groupName = groupName;
-  }
-
-  @Override
-  public String getGroupId() {
-    return groupId;
   }
 
   @Override
@@ -93,7 +81,7 @@ public class Group implements IGroup{
    */
   private void validateAdmin(String admin) {
     if(!this.admins.contains(admin)) {
-      throw new InvalidAdminException(admin + " is not an admin of " + this.groupName + " group");
+      throw new InvalidAdminException(admin + " is not an admin of " + this.name + " group");
     }
   }
 }

@@ -25,16 +25,16 @@ public class UserTest {
   @Test
   public void testUserCreation() {
     User user = new User(name);
-    assertEquals(name, user.getName());
+    assertEquals(name, user.getName().get(0));
   }
 
   @Test
   public void testUserNameChange() {
     User user = new User(name);
-    assertEquals(name, user.getName());
+    assertEquals(name, user.getName().get(0));
     String changedName = "Devansh";
     user.setName(changedName);
-    assertEquals(changedName, user.getName());
+    assertEquals(changedName, user.getName().get(0));
   }
 
   @Test
@@ -46,12 +46,12 @@ public class UserTest {
     userService.addUser(devansh);
     userService.addUser(harshil);
 
-    harshil.connectTo(devansh.getName());
+    harshil.connectTo(devansh.getName().get(0));
 
     devansh.connectTo(harshilName);
 
-    assertEquals(devansh.getName(), harshil.getConnectedUsers());
-    assertEquals(harshilName, devansh.getConnectedUsers());
+    assertEquals(devansh.getName().get(0), harshil.getConnectedMembers());
+    assertEquals(harshilName, devansh.getConnectedMembers());
 
     String pankajName = "Pankaj1";
     User pankaj = new User(pankajName);
@@ -59,7 +59,7 @@ public class UserTest {
 
 
     harshil.connectTo(pankajName);
-    assertEquals(pankajName, harshil.getConnectedUsers());
+    assertEquals(pankajName, harshil.getConnectedMembers());
   }
 
   @Test(expected = NoSuchUserPresentException.class)
@@ -78,23 +78,29 @@ public class UserTest {
 
     User duplicateDevansh = new User(name);
 
-    assertTrue(devansh.equals(duplicateDevansh));
+    assertEquals(devansh, duplicateDevansh);
   }
 
   @Test
   public void testNotEqualUsers() {
     User devansh = new User(name);
-    String devanshID = devansh.getUserID();
+    String devanshID = devansh.getId();
 
     User duplicateDevansh = new User(name + "1");
 
-    String duplicatDevanshID = duplicateDevansh.getUserID();
+    String duplicatDevanshID = duplicateDevansh.getId();
     assertNotEquals(devanshID, duplicatDevanshID);
 
     Group group = new Group("test",new ArrayList<>(),new ArrayList<>());
-    assertFalse(devansh.equals(duplicateDevansh));
-    assertFalse(devansh.equals(group));
+    assertNotEquals(devansh, duplicateDevansh);
+    assertNotEquals(devansh, group);
   }
 
+  @Test
+  public void testUserHashCode() {
+    User devansh = new User(name);
+    User anotherDevansh = new User(name);
 
+    assertEquals(devansh.hashCode(), anotherDevansh.hashCode());
+  }
 }

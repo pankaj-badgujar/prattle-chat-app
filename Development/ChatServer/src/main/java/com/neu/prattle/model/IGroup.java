@@ -11,17 +11,6 @@ import java.util.List;
  * @version 1.0 dated 2019-10-26
  */
 public interface IGroup {
-  /**
-   * Retrieves the unique id of this group.
-   * @return String representation of the group ID
-   */
-  String getGroupId();
-
-  /**
-   * The name of the group as given by a user/admin.
-   * @return String representing the name of this group.
-   */
-  String getGroupName();
 
   /**
    * Returns the list of users currently a part of this group.
@@ -34,12 +23,6 @@ public interface IGroup {
    * @return List of String representing names of the admins of this group.
    */
   List<String> getAdmins();
-
-  /**
-   * A function to set the group name after it has been created.
-   * @param groupName Desired new name of the group
-   */
-  void setGroupName(String groupName);
 
   /**
    * A function to add a user to the current list of users present in this group.

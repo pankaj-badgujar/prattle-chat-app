@@ -1,6 +1,7 @@
 
 package com.neu.prattle.controllertest;
 
+import com.neu.prattle.controller.GroupController;
 import com.neu.prattle.controller.UserController;
 
 import org.glassfish.jersey.server.ResourceConfig;
@@ -32,7 +33,7 @@ public class UserControllerTest extends JerseyTest {
     target("/user/create").request().post(entity);
     entity = Entity.entity("{\"name\": \"Harshil\"}", MediaType.APPLICATION_JSON);
     Response response = target("/user/create").request().post(entity);
-    assertEquals(409, response.getStatus());
+    assertEquals(500, response.getStatus());
   }
 
   @Test
@@ -73,4 +74,5 @@ public class UserControllerTest extends JerseyTest {
   protected Application configure() {
     return new ResourceConfig(UserController.class);
   }
+
 }
