@@ -31,7 +31,7 @@ pipeline {
                  //echo "Building Chatter"
                  //sh 'mvn -f Development/pom.xml install'
                  echo "Building ChatServer"
-                 sh 'npm install'
+                 sh 'npm install --prefix Development/chat-frontend'
                  sh 'mvn -f Development/ChatServer/pom.xml compile'
                }
    } // build
