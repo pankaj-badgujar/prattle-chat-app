@@ -1,5 +1,11 @@
 package com.neu.prattle.model;
 
+import java.util.Optional;
+
+/**
+ * @author Devansh Gandhi
+ * @version 1.0 dated 11/1/2019
+ */
 public interface IUser {
 
   /**
@@ -7,13 +13,13 @@ public interface IUser {
    *
    * @return List of the users that are connected to this user.
    */
-  String getConnectedMembers();
+  Optional<IMember> getConnectedMembers();
 
   /**
    * Setter methods to connect this users to the other users passed in the parameter.
    *
-   * @param otherUsers users that needs to be connected to this user.
+   * @param otherMember users that needs to be connected to this user.
    */
-  void connectTo(String otherUsers) ;
+  void connectTo(IMember otherMember);
 
 }

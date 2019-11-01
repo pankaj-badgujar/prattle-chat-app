@@ -7,13 +7,16 @@ package com.neu.prattle.websocket;
  * @version dated 2019-10-18
  */
 
+import com.neu.prattle.model.IMember;
+import com.neu.prattle.model.IUser;
 import com.neu.prattle.model.Message;
-import com.neu.prattle.model.User;
-import com.neu.prattle.service.UserService;
-import com.neu.prattle.service.UserServiceImpl;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -35,39 +38,45 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/chat/{username}", decoders = MessageDecoder.class, encoders = MessageEncoder.class)
 public class ChatEndpoint {
 
-  /** The account service. */
-  private UserService accountService = UserServiceImpl.getInstance();
+  /**
+   * The account service.
+   */
+  private MemberService accountService = MemberServiceImpl.getInstance();
 
-  /** The session. */
+  /**
+   * The session.
+   */
   private Session session;
 
-  /** The Constant chatEndpoints. */
+  /**
+   * The Constant chatEndpoints.
+   */
   private static final Set<ChatEndpoint> chatEndpoints = new CopyOnWriteArraySet<>();
 
-  /** The users. */
+  /**
+   * The users.
+   */
   private static HashMap<String, String> users = new HashMap<>();
 
   /**
    * On open.
    *
-   * Handles opening a new session (websocket connection). If the user is a known
-   * user (user management), the session added to the pool of sessions and an
-   * announcement to that pool is made informing them of the new user.
+   * Handles opening a new session (websocket connection). If the user is a known user (user
+   * management), the session added to the pool of sessions and an announcement to that pool is made
+   * informing them of the new user.
    *
-   * If the user is not known, the pool is not augmented and an error is sent to
-   * the originator.
+   * If the user is not known, the pool is not augmented and an error is sent to the originator.
    *
    * @param session  the web-socket (the connection)
-   * @param username the name of the user (String) used to find the associated
-   *                 UserService object
+   * @param username the name of the user (String) used to find the associated UserService object
    * @throws IOException     Signals that an I/O exception has occurred.
    * @throws EncodeException the encode exception
    */
   @OnOpen
   public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
 
-    Optional<User> user = accountService.findUserByName(username);
-    if (!user.isPresent()) {
+    Optional<IMember> member = accountService.findMemberByName(username);
+    if (!member.isPresent()) {
       Message error = Message.messageBuilder()
               .setMessageContent(String.format("User %s could not be found", username))
               .build();
@@ -82,8 +91,8 @@ public class ChatEndpoint {
   /**
    * Adds a newly opened session to the pool of sessions.
    *
-   * @param session    the newly opened session
-   * @param username   the user who connected
+   * @param session  the newly opened session
+   * @param username the user who connected
    */
   private void addEndpoint(Session session, String username) {
     this.session = session;
@@ -110,8 +119,8 @@ public class ChatEndpoint {
   /**
    * On close.
    *
-   * Closes the session by removing it from the pool of sessions and
-   * broadcasting the news to everyone else.
+   * Closes the session by removing it from the pool of sessions and broadcasting the news to
+   * everyone else.
    *
    * @param session the session
    */
@@ -128,7 +137,7 @@ public class ChatEndpoint {
    *
    * Handles situations when an error occurs.  Not implemented.
    *
-   * @param session the session with the problem
+   * @param session   the session with the problem
    * @param throwable the action to be taken.
    */
   @OnError
@@ -137,31 +146,33 @@ public class ChatEndpoint {
   }
 
   private void broadcastToTheConnectUser(String userFrom, Message message) {
-    Optional<User> user = accountService.findUserByName(userFrom);
+    Optional<IMember> user = accountService.findMemberByName(userFrom);
 
-    String toUser = null;
+    Optional<IMember> toMember = user.isPresent() ? ((IUser) user.get()).getConnectedMembers()
+            : Optional.empty();
 
-    if (user.isPresent()) {
-      toUser = user.get().getConnectedMembers();
-    }
+    List<String> allConnectedMembers = toMember.isPresent() ?
+            toMember.get().getAllConnectedMembers() : new ArrayList<>();
 
-    String toUserSessionId = getSessionID(toUser);
     String fromUserSessionId = session.getId();
 
+    for (String connectedMember : allConnectedMembers) {
+      String toUserSessionId = getSessionID(connectedMember);
 
-    chatEndpoints.forEach(endpoint -> {
-      synchronized (endpoint) {
-        try {
-          if (endpoint.session.getId().equals(toUserSessionId)
-                  || endpoint.session.getId().equals(fromUserSessionId)) {
-            endpoint.session.getBasicRemote()
-                    .sendObject(message);
+      chatEndpoints.forEach(endpoint -> {
+        synchronized (endpoint) {
+          try {
+            if (endpoint.session.getId().equals(toUserSessionId)
+                    || endpoint.session.getId().equals(fromUserSessionId)) {
+              endpoint.session.getBasicRemote()
+                      .sendObject(message);
+            }
+          } catch (EncodeException | IOException e) {
+            // Add a logger here to handle exception
           }
-        } catch (EncodeException | IOException e) {
-          // Add a logger here to handle exception
         }
-      }
-    });
+      });
+    }
   }
 
   private String getSessionID(String toUser) {

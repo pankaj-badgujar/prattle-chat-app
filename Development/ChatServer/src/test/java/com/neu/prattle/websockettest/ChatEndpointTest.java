@@ -1,9 +1,10 @@
 package com.neu.prattle.websockettest;
 
+import com.neu.prattle.model.Group;
 import com.neu.prattle.model.Message;
 import com.neu.prattle.model.User;
-import com.neu.prattle.service.UserService;
-import com.neu.prattle.service.UserServiceImpl;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
 import com.neu.prattle.websocket.ChatEndpoint;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -16,6 +17,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -65,20 +68,26 @@ public class ChatEndpointTest extends TestContainer {
   }
 
   @Test
-  public void testOnOpenValid() throws DeploymentException, InterruptedException {
-    UserService userService = UserServiceImpl.getInstance();
+  public void testOnOpenValid() throws DeploymentException {
+    MemberService userService = MemberServiceImpl.getInstance();
 
-    userService.addUser(new User("Vaibhav"));
+    User vaibhav = new User("Vaibhav");
+    userService.addUser(vaibhav);
     User user = (new User("bhargavi"));
-    user.connectTo("Vaibhav");
+    List<String> fromUsers = new ArrayList<>();
+    fromUsers.add("bhargavi");
+    fromUsers.add("Vaibhav");
+    Group group = new Group("test",fromUsers);
     userService.addUser(user);
+    userService.addGroup(group);
+    user.connectTo(group);
     final Server server = startServer(ChatEndpoint.class);
-    final CountDownLatch messageLatch = new CountDownLatch(1);
     try {
       ClientManager clientManager = ClientManager.createClient();
       ChatEndpointClient chatEndpointClient = new ChatEndpointClient(appendable);
       clientManager.connectToServer(chatEndpointClient,
-              ClientEndpointConfig.Builder.create().build(), new URI("ws://localhost:8025/e2e-test/chat/bhargavi"));
+              ClientEndpointConfig.Builder.create().build(), new URI("ws://localhost" +
+                      ":8025/e2e-test/chat/bhargavi"));
     } catch (IOException | URISyntaxException e) {
       e.printStackTrace();
     }

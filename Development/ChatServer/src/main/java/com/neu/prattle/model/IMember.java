@@ -13,9 +13,10 @@ public interface IMember {
 
   /**
    * A method to return the name of this member.
+   *
    * @return String representation of the member name.
    */
-  List<String> getName();
+  String getName();
 
   /**
    * Setter method to change the name of the member to the name provided in the parameter.
@@ -30,5 +31,12 @@ public interface IMember {
    * @return Unique user ID of the user.
    */
   String getId();
+
+  /**
+   * Get all connected members to this member as a list of strings with their username.
+   *
+   * @return List of all the connected members.
+   */
+  List<String> getAllConnectedMembers();
 
 }

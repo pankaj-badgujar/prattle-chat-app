@@ -8,14 +8,13 @@ import java.util.UUID;
 public abstract class AbstractMember implements IMember {
 
   protected String name;
-  protected String connectedTo;
-  protected String id;
+  private String id;
 
   AbstractMember() {
     this.name = null;
     this.id = UUID.randomUUID().toString();
-    this.connectedTo = null;
   }
+
 
   @Override
   public void setName(String name) {
@@ -23,7 +22,7 @@ public abstract class AbstractMember implements IMember {
   }
 
   @Override
-  public String getId()  {
+  public String getId() {
     return id;
   }
 }

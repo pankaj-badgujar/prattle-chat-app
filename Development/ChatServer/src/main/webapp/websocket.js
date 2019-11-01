@@ -19,7 +19,7 @@ window.onload = function() {
 
 function connectTo() {
     var chatWith = document.getElementById("connectTo").value;
-    var url = "http://localhost:8080/prattle/rest/user/connectToUsers"
+    var url = "http://localhost:8080/prattle/rest/user/connectToUsers";
 
     if(chatWith !== "") {
         // Add API call here!

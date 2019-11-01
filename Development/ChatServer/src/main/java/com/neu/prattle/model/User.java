@@ -1,15 +1,15 @@
 package com.neu.prattle.model;
 
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
-import com.neu.prattle.service.UserService;
-import com.neu.prattle.service.UserServiceImpl;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.Optional;
 
 /***
  * A User object represents a basic account information for a user.
@@ -17,7 +17,9 @@ import java.util.UUID;
  * @author Devansh Gandhi
  * @version 1.1 dated 2019-10-16
  */
-public class User extends AbstractMember implements IUser{
+public class User extends AbstractMember implements IUser {
+
+  private IMember connectedTo;
 
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
@@ -28,7 +30,6 @@ public class User extends AbstractMember implements IUser{
   public User(@JsonProperty("name") String name) {
     this.name = name;
     this.connectedTo = null;
-    this.id = UUID.randomUUID().toString();
   }
 
   public User() {
@@ -36,25 +37,25 @@ public class User extends AbstractMember implements IUser{
   }
 
   @Override
-  public List<String> getName() {
-    return Collections.singletonList(this.name);
+  public String getName() {
+    return this.name;
   }
 
   @Override
-  public void connectTo(String otherUsers) {
+  public void connectTo(IMember otherMember) {
 
-    UserService allRegisteredUsers = UserServiceImpl.getInstance();
+    MemberService allRegisteredMember = MemberServiceImpl.getInstance();
 
-    if (!allRegisteredUsers.findUserByName(otherUsers).isPresent()) {
-      throw new NoSuchUserPresentException(otherUsers);
+    if (!allRegisteredMember.findMemberByName(otherMember.getName()).isPresent()) {
+      throw new NoSuchUserPresentException(otherMember.getName());
     }
 
-    this.connectedTo = otherUsers;
+    this.connectedTo = otherMember;
   }
 
   @Override
-  public String getConnectedMembers() {
-    return connectedTo;
+  public Optional<IMember> getConnectedMembers() {
+    return Optional.of(connectedTo);
   }
 
   /***
@@ -87,5 +88,12 @@ public class User extends AbstractMember implements IUser{
 
     User user = (User) obj;
     return user.name.equals(this.name);
+  }
+
+  @Override
+  public List<String> getAllConnectedMembers() {
+    List<String> user = new ArrayList<>();
+    user.add(name);
+    return user;
   }
 }

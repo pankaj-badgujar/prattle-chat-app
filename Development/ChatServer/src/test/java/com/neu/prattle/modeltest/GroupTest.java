@@ -2,7 +2,6 @@ package com.neu.prattle.modeltest;
 
 import com.neu.prattle.exceptions.InvalidAdminException;
 import com.neu.prattle.model.Group;
-import com.neu.prattle.model.IGroup;
 import com.neu.prattle.model.IMember;
 
 import org.junit.Before;
@@ -11,13 +10,13 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for the creation of group instances. A group is a collection of users in the system
  *
- * @version 1.0 dated 2019-10-16
  * @author Harshil Mavani
+ * @version 1.0 dated 2019-10-16
  */
 public class GroupTest {
   private IMember group;
@@ -37,11 +36,11 @@ public class GroupTest {
   }
 
   @Test
-  public void testGroupInstantiation(){
-    assertEquals("FSE", group.getName().get(0));
+  public void testGroupInstantiation() {
+    assertEquals("FSE", group.getName());
 
     group.setName("MSD");
-    assertEquals("MSD", group.getName().get(0));
+    assertEquals("MSD", group.getName());
     assertEquals(((Group) (group)).getUsers().toString(), users.toString());
     assertEquals(((Group) (group)).getAdmins().toString(), admins.toString());
   }
@@ -64,7 +63,7 @@ public class GroupTest {
   public void testInvalidAddAdminRequest() {
     try {
       ((Group) (group)).makeAdmin("Bhargavi", "Vaibhav");
-    } catch(InvalidAdminException iae) {
+    } catch (InvalidAdminException iae) {
       assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
     }
   }
@@ -73,7 +72,7 @@ public class GroupTest {
   public void testInvalidAddUserRequest() {
     try {
       ((Group) (group)).addUser("Bhargavi", "Vaibhav");
-    } catch(InvalidAdminException iae) {
+    } catch (InvalidAdminException iae) {
       assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
     }
   }
@@ -87,9 +86,9 @@ public class GroupTest {
 
   @Test
   public void testInvalidRemoveUserRequest() {
-    try{
+    try {
       ((Group) (group)).removeUser("Harshil", "Bhargavi");
-    } catch(InvalidAdminException iae) {
+    } catch (InvalidAdminException iae) {
       assertEquals("Harshil is not an admin of FSE group", iae.getMessage());
     }
   }
@@ -107,18 +106,18 @@ public class GroupTest {
 
   @Test
   public void testInvalidRemoveAdminRequest() {
-    try{
+    try {
       ((Group) (group)).removeUser("Bhargavi", "Mike");
-    } catch(InvalidAdminException iae) {
+    } catch (InvalidAdminException iae) {
       assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
     }
   }
 
   @Test
   public void testInvalidAdminBeingRemovedRequest() {
-    try{
+    try {
       ((Group) (group)).removeUser("Mike", "Bhargavi");
-    } catch(InvalidAdminException iae) {
+    } catch (InvalidAdminException iae) {
       assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
     }
   }
