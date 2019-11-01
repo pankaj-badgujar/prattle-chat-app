@@ -8,18 +8,20 @@ const defaultState = {
     logContent: ''
 };
 
+let ws;
+
 class App extends React.Component {
-    ws;
 
     constructor(props) {
         super(props);
         this.state = defaultState;
+    }
+
+    componentDidMount() {
         const username = new URLSearchParams(window.location.search).get("user");
-        this.ws = new WebSocket("ws://" + window.location.host + window.location.pathname + "chat/" + username);
-        this.setState({...this.state, username}, () => {
-            console.log(this.state)
-        });
-        this.ws.onmessage = this.messageHandler;
+        ws = new WebSocket("ws://" + window.location.host + window.location.pathname + "chat/" + username);
+        ws.onmessage = this.messageHandler;
+        this.setState({...this.state, username});
     }
 
     updateMessageContent = (e) => {
@@ -38,7 +40,7 @@ class App extends React.Component {
         let json = JSON.stringify({
             "content": this.state.messageContent
         });
-        this.ws.send(json);
+        ws.send(json);
     };
 
     messageHandler = (event) => {
