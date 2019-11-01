@@ -29,6 +29,7 @@ pipeline {
                  //echo "Building Chatter"
                  //sh 'mvn -f Development/pom.xml install'
                  echo "Building ChatServer"
+                 sh 'npm install'
                  sh 'mvn -f Development/ChatServer/pom.xml compile'
                }
    } // build
