@@ -1,19 +1,25 @@
 import React from 'react';
 import {CONNECT_TO_USER_URL} from './constants';
 
+const defaultState = {
+    username: '',
+    messageContent: '',
+    chatWith: '',
+    logContent: ''
+};
 
 class App extends React.Component {
     ws;
 
     constructor(props) {
         super(props);
-        let urlParams = new URLSearchParams(window.location.search);
-        this.state = {
-            username: urlParams.get("user"),
-            messageContent: '',
-            chatWith: '',
-            logContent: ''
-        };
+        this.state = defaultState;
+        const username = new URLSearchParams(window.location.search).get("user");
+        this.ws = new WebSocket("ws://" + window.location.host + window.location.pathname + "chat/" + username);
+        this.setState({...this.state, username}, () => {
+            console.log(this.state)
+        });
+        this.ws.onmessage = this.messageHandler;
     }
 
     updateMessageContent = (e) => {
@@ -28,12 +34,6 @@ class App extends React.Component {
         });
     };
 
-
-    componentDidMount() {
-        this.ws = new WebSocket("ws://" + window.location.host + window.location.pathname + "chat/" + this.state.username);
-        this.ws.onmessage = this.messageHandler;
-    }
-
     send = () => {
         let json = JSON.stringify({
             "content": this.state.messageContent
@@ -47,15 +47,15 @@ class App extends React.Component {
         this.setState({...this.state, logContent})
     };
 
-    connectTo = () => {
-
+    connectTo = (event) => {
+        event.preventDefault();
         if (this.state.chatWith !== "") {
             let jsonBody = {
                 "userFrom": this.state.username,
                 "userTo": this.state.chatWith
             };
 
-            fetch("http://"+window.location.host + CONNECT_TO_USER_URL, {
+            fetch("http://" + window.location.host + CONNECT_TO_USER_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
