@@ -18,19 +18,19 @@ class App extends React.Component{
     this.setState({
       messageContent: e.target.value
     });
-  }
+  };
 
   updateChatWith = (e) => {
     this.setState({
       chatWith: e.target.value
     });
-  }
+  };
 
   updateLog = (e) =>{
     this.setState({
       logContent: e.target.value
     })
-  }
+  };
 
   componentDidMount() {
     this.ws = new WebSocket("ws://" + window.location.host  + window.location.pathname + "chat/" + this.state.username);
@@ -42,7 +42,7 @@ class App extends React.Component{
       "content": this.state.messageContent
     });
     this.ws.send(json);
-  }
+  };
 
   messageHandler = (event) => {
     let message = JSON.parse(event.data);
@@ -66,7 +66,7 @@ class App extends React.Component{
         body: JSON.stringify(jsonBody)
       }).then(res => res.status!==200? alert("User doesnt exist"):console.log(res));
     }
-  }
+  };
 
   render(){
     return(
