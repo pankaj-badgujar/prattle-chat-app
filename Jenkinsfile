@@ -21,7 +21,9 @@ pipeline {
         args '-v m2_repos:/root/.m2'
                 } //docker
             } // agent
-
+          environment {
+                  HOME = '.'
+              }
             stages {
 
              stage('Build') {
@@ -29,7 +31,7 @@ pipeline {
                  //echo "Building Chatter"
                  //sh 'mvn -f Development/pom.xml install'
                  echo "Building ChatServer"
-                 sh 'sudo npm install'
+                 sh 'npm install'
                  sh 'mvn -f Development/ChatServer/pom.xml compile'
                }
    } // build
