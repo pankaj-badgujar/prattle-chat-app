@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { CONNECT_TO_USER_URL } from './Constants';
 
 class App extends React.Component{
   ws;
@@ -7,43 +7,58 @@ class App extends React.Component{
     super(props);
     let urlParams = new URLSearchParams(window.location.search);
     this.state={
-      username: urlParams.get("user")
+      username: urlParams.get("user"),
+      messageContent: '',
+      chatWith:'',
+      logContent: ''
     };
+  }
 
-    this.send = this.send.bind(this);
-    this.connectTo = this.connectTo.bind(this);
+  updateMessageContent = (e) => {
+    this.setState({
+      messageContent: e.target.value
+    });
+  }
+
+  updateChatWith = (e) => {
+    this.setState({
+      chatWith: e.target.value
+    });
+  }
+
+  updateLog = (e) =>{
+    this.setState({
+      logContent: e.target.value
+    })
   }
 
   componentDidMount() {
-    let host = window.location.host;
-    let pathname = window.location.pathname;
-    this.ws = new WebSocket("ws://" + host  + pathname + "chat/" + this.state.username);
-    this.ws.onmessage = function(event) {
-      let log = document.getElementById("log");
-      let message = JSON.parse(event.data);
-      log.innerHTML += message.from + " : " + message.content + "\n";
-    };
+    this.ws = new WebSocket("ws://" + window.location.host  + window.location.pathname + "chat/" + this.state.username);
+    this.ws.onmessage = this.messageHandler;
   }
 
-  send(){
-    let content = document.getElementById("msg").value;
+  send = () => {
     let json = JSON.stringify({
-      "content":content
+      "content": this.state.messageContent
     });
     this.ws.send(json);
   }
 
-  connectTo(){
-    let chatWith = document.getElementById("connectTo").value;
-    let url = "http://localhost:8080/prattle/rest/user/connectToUsers";
+  messageHandler = (event) => {
+    let message = JSON.parse(event.data);
+    const logContent = this.state.logContent + message.from + " : " + message.content + "\n";
+    this.setState({...this.state, logContent})
+  };
 
-    if(chatWith !== "") {
+  connectTo =() =>{
+
+    if(this.state.chatWith !== "") {
       let jsonBody = {
         "userFrom" : this.state.username ,
-        "userTo" : chatWith
+        "userTo" : this.state.chatWith
       };
 
-      fetch(url, {
+      fetch(CONNECT_TO_USER_URL, {
         method: 'POST',
         headers: {
           'Content-Type' : 'application/json'
@@ -62,18 +77,18 @@ class App extends React.Component{
             <tr>
               <td colSpan="2">
                 <input type="text" id="connectTo"
-                       placeholder="Username"/>
+                       placeholder="Username" onChange={this.updateChatWith}/>
               </td>
               <td><button onClick={this.connectTo}>Connect</button></td>
             </tr>
             <tr>
               <td>
-                <textarea readOnly={true} rows="10" cols="80" id="log"/>
+                <textarea readOnly={true} value={this.state.logContent} rows="10" cols="80" id="log"/>
               </td>
             </tr>
             <tr>
               <td>
-                <input type="text" size="51" id="msg" placeholder="Message"/>
+                <input type="text" size="51" id="msg" placeholder="Message" onChange={this.updateMessageContent}/>
                 <button type="button"
                         onClick={this.send}
                 >Send</button>
