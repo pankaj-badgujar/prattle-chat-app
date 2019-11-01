@@ -26,11 +26,6 @@ class App extends React.Component{
     });
   };
 
-  updateLog = (e) =>{
-    this.setState({
-      logContent: e.target.value
-    })
-  };
 
   componentDidMount() {
     this.ws = new WebSocket("ws://" + window.location.host  + window.location.pathname + "chat/" + this.state.username);

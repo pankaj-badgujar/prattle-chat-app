@@ -26,3 +26,5 @@ npm-debug.log*
 yarn-debug.log*
 
 .idea
+.scannerwork
+sonar-project.properties
