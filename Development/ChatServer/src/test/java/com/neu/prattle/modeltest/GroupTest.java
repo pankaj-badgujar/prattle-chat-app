@@ -2,7 +2,12 @@ package com.neu.prattle.modeltest;
 
 import com.neu.prattle.exceptions.InvalidAdminException;
 import com.neu.prattle.model.Group;
+import com.neu.prattle.model.IGroup;
 import com.neu.prattle.model.IMember;
+import com.neu.prattle.model.IUser;
+import com.neu.prattle.model.User;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +34,7 @@ public class GroupTest {
     users.add("Harshil");
     users.add("Devansh");
     users.add("Pankaj");
+    users.add("Mike");
 
     admins = new ArrayList<>();
     admins.add("Mike");
@@ -120,5 +126,21 @@ public class GroupTest {
     } catch (InvalidAdminException iae) {
       assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
     }
+  }
+
+  @Test
+  public void testGetAllMembers() {
+    User harshil = new User("Harshil");
+    User devansh = new User("Pankaj");
+    User pankaj = new User("Devansh");
+    User mike = new User("Mike");
+
+    MemberService accountService = MemberServiceImpl.getInstance();
+    accountService.addUser(harshil);
+    accountService.addUser(devansh);
+    accountService.addUser(pankaj);
+    accountService.addUser(mike);
+
+    assertEquals(users, group.getAllConnectedMembers());
   }
 }

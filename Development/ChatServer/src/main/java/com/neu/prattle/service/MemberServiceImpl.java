@@ -21,6 +21,8 @@ public class MemberServiceImpl implements MemberService {
   private final List<IMember> members = new ArrayList<>();
   private static MemberService memberService;
 
+  private MemberServiceImpl(){}
+
   static {
     memberService = new MemberServiceImpl();
   }
