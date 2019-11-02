@@ -39,7 +39,7 @@ public class UserTest {
   public void testUsersConnection() {
     MemberService userService = MemberServiceImpl.getInstance();
     String harshilName = "harshil";
-    User devansh = new User("Devansh");
+    User devansh = new User("Devansh2");
     User harshil = new User(harshilName);
     userService.addUser(devansh);
     userService.addUser(harshil);

@@ -130,10 +130,20 @@ public class GroupTest {
 
   @Test
   public void testGetAllMembers() {
-    User harshil = new User("Harshil");
-    User devansh = new User("Pankaj");
-    User pankaj = new User("Devansh");
-    User mike = new User("Mike");
+    User harshil = new User("Harshil5");
+    User devansh = new User("Pankaj5");
+    User pankaj = new User("Devansh5");
+    User mike = new User("Mike5");
+
+    users = new ArrayList<>();
+    users.add("Harshil5");
+    users.add("Devansh5");
+    users.add("Pankaj5");
+    users.add("Mike5");
+
+    admins = new ArrayList<>();
+    admins.add("Mike5");
+    group = new Group("FSE1", users, admins);
 
     MemberService accountService = MemberServiceImpl.getInstance();
     accountService.addUser(harshil);
