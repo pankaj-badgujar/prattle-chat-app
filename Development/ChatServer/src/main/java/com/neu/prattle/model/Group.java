@@ -37,12 +37,14 @@ public class Group extends AbstractMember implements IGroup {
     this.admins = new ArrayList<>(admins);
   }
 
-  public Group(String name, List<String> users) {
+  public Group(String name, String users) {
     this.setName(name);
-    this.users = new ArrayList<>(users);
+    this.users = new ArrayList<>();
+    this.users.add(users);
+    this.admins.add(users);
   }
 
-  public Group(){
+  public Group() {
 
   }
 
