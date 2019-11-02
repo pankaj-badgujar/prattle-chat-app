@@ -1,7 +1,5 @@
 package com.neu.prattle.model;
 
-import java.util.UUID;
-
 /***
  * A Basic POJO for Message.
  *
@@ -22,10 +20,7 @@ public class Message {
    */
   private String content;
 
-  private String id;
-
   public Message(String string) {
-    id = UUID.randomUUID().toString();
     content = string;
   }
 
@@ -36,7 +31,6 @@ public class Message {
   @Override
   public String toString() {
     return new StringBuilder()
-            //.append("id").append(id)
             .append("From: ").append(from)
             .append("\nTo: ").append(to)
             .append("\nContent: ").append(content)
@@ -62,10 +56,6 @@ public class Message {
   public String getContent() {
     return content;
   }
-
-//  public String getMessageID() {
-//    return this.id;
-//  }
 
   public void setContent(String content) {
     this.content = content;
