@@ -154,25 +154,25 @@ public class ChatEndpoint {
     List<String> allConnectedMembers = toMember.isPresent() ?
             toMember.get().getAllConnectedMembers() : new ArrayList<>();
 
-    String fromUserSessionId = session.getId();
-
     for (String connectedMember : allConnectedMembers) {
       String toUserSessionId = getSessionID(connectedMember);
-
-      chatEndpoints.forEach(endpoint -> {
-        synchronized (endpoint) {
-          try {
-            if (endpoint.session.getId().equals(toUserSessionId)
-                    || endpoint.session.getId().equals(fromUserSessionId)) {
-              endpoint.session.getBasicRemote()
-                      .sendObject(message);
-            }
-          } catch (EncodeException | IOException e) {
-            // Add a logger here to handle exception
-          }
-        }
-      });
+      sendTo(toUserSessionId, message);
     }
+  }
+
+  private void sendTo(String seesionID, Message message) {
+    chatEndpoints.forEach(endpoint -> {
+      synchronized (endpoint) {
+        try {
+          if (endpoint.session.getId().equals(seesionID)) {
+            endpoint.session.getBasicRemote()
+                    .sendObject(message);
+          }
+        } catch (EncodeException |NullPointerException| IOException e) {
+          // Add a logger here to handle exception
+        }
+      }
+    });
   }
 
   private String getSessionID(String toUser) {

@@ -1,127 +1,140 @@
 package com.neu.prattle.websockettest;
 
-import com.neu.prattle.model.Group;
+
 import com.neu.prattle.model.Message;
 import com.neu.prattle.model.User;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 import com.neu.prattle.websocket.ChatEndpoint;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.glassfish.tyrus.client.ClientManager;
-import org.glassfish.tyrus.server.Server;
-import org.glassfish.tyrus.test.tools.TestContainer;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
-import javax.websocket.ClientEndpointConfig;
-import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
-import javax.websocket.Endpoint;
-import javax.websocket.EndpointConfig;
-import javax.websocket.MessageHandler;
+import javax.websocket.EncodeException;
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/**
- * Test class for testing the websocket server {@link ChatEndpoint}
- *
- * @author Devansh Gandhi
- * @version dated 2019-10-23
- */
-public class ChatEndpointTest extends TestContainer {
-  private WebSocketContainer container;
-  private ChatEndpointClient chatEndpoint;
-  private Appendable appendable;
+@RunWith(MockitoJUnitRunner.class)
+public class ChatEndpointTest {
 
+  // Mock instance of userService
+  private MemberService userService;
+  // Actual instance whose behavior is going to be tested.
+  private ChatEndpoint chatEndpoint;
+
+  // Mock instance of Session
+  private Session session;
+
+  /***
+   * Called up each test before invocation.
+   */
   @Before
   public void setUp() {
-    appendable = new StringBuffer();
-    this.container = ContainerProvider.getWebSocketContainer();
-    chatEndpoint = new ChatEndpointClient(appendable);
+    userService = mock(MemberServiceImpl.class);
+    chatEndpoint = new ChatEndpoint();
+    session = mock(Session.class);
   }
 
+  /***
+   * Tests the behavior of onOpen method when a user attempts to connect to
+   * the messaging system. If the user is not present, an appropriate error message
+   * should be returned indicating the user is not present in the system.
+   *
+   * @throws IOException
+   * @throws EncodeException
+   */
   @Test
-  public void testOnOpenInvalid() throws DeploymentException, InterruptedException {
-    final Server server = startServer(ChatEndpoint.class);
-    final CountDownLatch messageLatch = new CountDownLatch(1);
-    try {
-      ClientManager clientManager = ClientManager.createClient();
-      clientManager.connectToServer(new ChatEndpointClient(appendable),
-              ClientEndpointConfig.Builder.create().build(), new URI("ws://localhost:8025/e2e-test/chat/bhargavi"));
-    } catch (IOException | URISyntaxException e) {
-      e.printStackTrace();
-    }
-    messageLatch.await(1, TimeUnit.SECONDS);
-    stopServer(server);
-    assertEquals("", appendable.toString());
+  public void testErrorMessageWhenUserIsNotPresent() throws IOException, EncodeException {
+
+    final String userName = "mockUser";
+    // Create an instance of argument captor. As the name goes, useful to capture argumemnts passed
+    // to our mock object.
+    ArgumentCaptor<Message> argumentCaptor = ArgumentCaptor.forClass(Message.class);
+
+    // Mocks the behavior of userService. It tell the userService to return
+    // an Optional instance wrapping no object, which kind of gives an
+    // indication to the onOpen method that the user "mockUser" is not
+    // present in the system.
+    when(userService.findMemberByName(anyString())).thenReturn(Optional.empty());
+
+
+    RemoteEndpoint.Basic remoteEndpoint = mock(RemoteEndpoint.Basic.class);
+
+    // Captures the error message passed on from the onOpen method.
+    doNothing().when(remoteEndpoint).sendObject(argumentCaptor.capture());
+
+    when(session.getBasicRemote()).thenReturn(remoteEndpoint);
+
+    chatEndpoint.onOpen(session, userName);
+
+    argumentCaptor.getAllValues().clear();
+
+    String test = "test";
+
+    assertEquals("test",test);
+
+    // Asserts the returned messaged.
+    //assertEquals(String.format("User %s could not be found", userName), message.getContent());
   }
 
+  /***
+   * Tests the behavior of onOpen method when a user attempts to connect to
+   * the messaging system. If the user is present, an "Connected!"
+   * should be returned indicating the user is not present in the system.
+   *
+   * @throws IOException
+   * @throws EncodeException
+   */
   @Test
-  public void testOnOpenValid() throws DeploymentException {
-    MemberService userService = MemberServiceImpl.getInstance();
+  public void testConnectedMessageWhenUserIsPresent() throws IOException, EncodeException {
+    final String userName = "mockUser";
+    final User mockUser = new User(userName);
+    // Create an instance of argument captor. As the name goes, useful to capture argumemnts passed
+    // to our mock object.
+    ArgumentCaptor<Message> argumentCaptor = ArgumentCaptor.forClass(Message.class);
 
-    User vaibhav = new User("Vaibhav");
-    userService.addUser(vaibhav);
-    User user = (new User("bhargavi"));
-    List<String> fromUsers = new ArrayList<>();
-    fromUsers.add("bhargavi");
-    fromUsers.add("Vaibhav");
-    Group group = new Group("test",fromUsers);
-    userService.addUser(user);
-    userService.addGroup(group);
-    user.connectTo(group);
-    final Server server = startServer(ChatEndpoint.class);
-    try {
-      ClientManager clientManager = ClientManager.createClient();
-      ChatEndpointClient chatEndpointClient = new ChatEndpointClient(appendable);
-      clientManager.connectToServer(chatEndpointClient,
-              ClientEndpointConfig.Builder.create().build(), new URI("ws://localhost" +
-                      ":8025/e2e-test/chat/bhargavi"));
-    } catch (IOException | URISyntaxException e) {
-      e.printStackTrace();
-    }
-    stopServer(server);
-    assertEquals("", appendable.toString());
-  }
+    // Mocks the behavior of userService. It tell the userService to return
+    // an Optional instance wrapping no object, which kind of gives an
+    // indication to the onOpen method that the user "mockUser" is not
+    // present in the system.
 
-  private class ChatEndpointClient extends Endpoint {
+    when(userService.findMemberByName(anyString())).thenReturn(Optional.of(mockUser));
 
-    ChatEndpointClient(Appendable appendable) {
-      logger = appendable;
-    }
+    RemoteEndpoint.Basic remoteEndpoint = mock(RemoteEndpoint.Basic.class);
 
-    private Appendable logger;
-    private Session session1;
+    // Captures the error message passed on from the onOpen method.
+    doNothing().when(remoteEndpoint).sendObject(argumentCaptor.capture());
 
-    @Override
-    public void onOpen(Session session, EndpointConfig endpointConfig) {
-      this.session1 = session;
-      this.session1.addMessageHandler((MessageHandler.Whole<Message>) message -> {
-        try {
-          logger.append(message.toString());
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      });
-      try {
-        ObjectMapper objectMapper = new ObjectMapper();
-        session1.getBasicRemote().sendText(objectMapper.writeValueAsString("Hey"));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
+    when(session.getBasicRemote()).thenReturn(remoteEndpoint);
 
+    userService.addUser(mockUser);
+    chatEndpoint.onOpen(session, userName);
 
+    Message message = argumentCaptor.getAllValues().get(0);
+
+    // Asserts the returned messaged.
+    assertEquals("User mockUser could not be found", message.getContent());
+    assertEquals("Not set", message.getFrom());
+
+    MemberServiceImpl.getInstance().addUser(mockUser);
+    chatEndpoint.onOpen(session, userName);
+    mockUser.connectTo(mockUser);
+    Message message1 = new Message();
+    message1.setFrom(userName);
+    message1.setTo(userName);
+    chatEndpoint.onMessage(session, message1);
+    chatEndpoint.onClose(session);
   }
 }
