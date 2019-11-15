@@ -7,9 +7,11 @@ import com.neu.prattle.service.MemberServiceImpl;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /***
  * A User object represents a basic account information for a user.
@@ -91,8 +93,8 @@ public class User extends AbstractMember implements IUser {
   }
 
   @Override
-  public List<String> getAllConnectedMembers() {
-    List<String> user = new ArrayList<>();
+  public Set<String> getAllConnectedMembers() {
+    Set<String> user = new HashSet<>();
     user.add(name);
     return user;
   }

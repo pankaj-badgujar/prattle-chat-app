@@ -5,8 +5,10 @@ import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A class to represent a group of users. Each Group consists of a list of all of it's users also,
@@ -95,9 +97,9 @@ public class Group extends AbstractMember implements IGroup {
   }
 
   @Override
-  public List<String> getAllConnectedMembers() {
+  public Set<String> getAllConnectedMembers() {
     MemberService memberService = MemberServiceImpl.getInstance();
-    List<String> allConnectedMembers = new ArrayList<>();
+    Set<String> allConnectedMembers = new HashSet<>();
     users.forEach(member -> {
       Optional<IMember> eachMember = memberService.findMemberByName(member);
       allConnectedMembers.addAll(eachMember.get().getAllConnectedMembers());

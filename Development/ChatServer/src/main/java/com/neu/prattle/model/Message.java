@@ -14,7 +14,7 @@ public class Message {
   /***
    * The name of the user to whom the message is sent.
    */
-  private String to; 
+  private String to;
   /***
    * It represents the contents of the message.
    */
