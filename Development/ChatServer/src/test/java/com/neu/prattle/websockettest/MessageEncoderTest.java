@@ -46,7 +46,7 @@ public class MessageEncoderTest {
     Message message = new Message();
     message.setContent("Team 6 FSE meeting");
     try {
-      assertEquals("{\"from\":null,\"to\":null,\"content\":\"Team 6 FSE meeting\"}",
+      assertEquals("{\"from\":null,\"content\":\"Team 6 FSE meeting\",\"to\":null}",
                 encoder.encode(message));
     } catch (EncodeException e) {
       e.printStackTrace();

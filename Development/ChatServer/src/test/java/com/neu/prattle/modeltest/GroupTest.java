@@ -13,7 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -151,6 +153,6 @@ public class GroupTest {
     accountService.addUser(pankaj);
     accountService.addUser(mike);
 
-    assertEquals(users, group.getAllConnectedMembers());
+    assertEquals(new HashSet<String>(users), group.getAllConnectedMembers());
   }
 }

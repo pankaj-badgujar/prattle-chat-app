@@ -1,5 +1,7 @@
 package com.neu.prattle.model;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 /***
  * A Basic POJO for Message.
  *
@@ -20,9 +22,13 @@ public class Message {
    */
   private String content;
 
-  public Message(String string) {
-    content = string;
+  public Message(@JsonProperty("from") String from, @JsonProperty("content") String content,
+                 @JsonProperty("to") String to) {
+    this.from = from;
+    this.content = content;
+    this.to = to;
   }
+
 
   public Message() {
 

@@ -1,6 +1,7 @@
 package com.neu.prattle.model;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A member class that denotes either a single user or a group of users. Exposes methods to access
@@ -37,6 +38,6 @@ public interface IMember {
    *
    * @return List of all the connected members.
    */
-  List<String> getAllConnectedMembers();
+  Set<String> getAllConnectedMembers();
 
 }
