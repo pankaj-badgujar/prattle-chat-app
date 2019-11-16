@@ -9,7 +9,9 @@ import com.neu.prattle.service.MemberServiceImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -106,7 +108,7 @@ public class UserTest {
   @Test
   public void testGetAllMembers() {
     User harshil = new User("harshil");
-    List<String> connectedMembers = new ArrayList<>();
+    Set<String> connectedMembers = new HashSet<>();
     connectedMembers.add("harshil");
     assertEquals(connectedMembers, harshil.getAllConnectedMembers());
   }
