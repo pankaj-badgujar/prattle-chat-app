@@ -16,8 +16,8 @@ import java.util.Set;
 /***
  * A User object represents a basic account information for a user.
  *
- * @author Devansh Gandhi
- * @version 1.1 dated 2019-10-16
+ * @author Bhargavi Padhya
+ * @version 1.2 dated 2019-11-15
  */
 public class User extends AbstractMember implements IUser {
 
@@ -41,7 +41,7 @@ public class User extends AbstractMember implements IUser {
   }
 
   @Override
-  public void setGroupsForUser(IMember group){
+  public void setGroupsForUser(IMember group) {
     groups.add(group);
   }
 
@@ -87,8 +87,9 @@ public class User extends AbstractMember implements IUser {
    */
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof User))
+    if (!(obj instanceof User)) {
       return false;
+    }
 
     User user = (User) obj;
     return user.name.equals(this.name);

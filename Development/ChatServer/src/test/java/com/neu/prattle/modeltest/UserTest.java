@@ -14,28 +14,27 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-@TestMethodOrder(OrderAnnotation.class)
+/**
+ * @author Bhargavi Padhya
+ * @version version 1.1 dated 11/15/2019
+ */
 public class UserTest {
 
   private final String name = "devansh";
   private MemberService memberService;
 
   @Before
-  public void setup(){
-    memberService= MemberServiceImpl.getInstance();
+  public void setup() {
+    memberService = MemberServiceImpl.getInstance();
   }
 
   @Test
-  @Order(1)
-  public void testAFindAllMembers(){
+  public void testAFindAllMembers() {
     User bhargavi = new User("bhargavi");
     User mike = new User("mike");
     User pranay = new User("pranay");
@@ -55,26 +54,17 @@ public class UserTest {
     allMembers.add(pranay);
     allMembers.add(group);
 
-
     Set<IMember> im = memberService.findAllMembers("bhargavi");
-    for(IMember im2: im)
-      System.out.println(im2.getName());
-    System.out.println("===");
-    for(IMember im2: allMembers)
-      System.out.println(im2.getName());
-
     assertTrue("true", memberService.findAllMembers("bhargavi").containsAll(allMembers));
   }
 
   @Test
-  @Order(2)
   public void testUserCreation() {
     User user = new User(name);
     assertEquals(name, user.getName());
   }
 
   @Test
-  @Order(3)
   public void testUserNameChange() {
     User user = new User(name);
     assertEquals(name, user.getName());
@@ -84,7 +74,6 @@ public class UserTest {
   }
 
   @Test
-  @Order(4)
   public void testUsersConnection() {
     String harshilName = "harshil";
     User devansh = new User("Devansh2");
@@ -103,13 +92,11 @@ public class UserTest {
     User pankaj = new User(pankajName);
     memberService.addUser(pankaj);
 
-
     harshil.connectTo(pankaj);
     assertEquals(pankajName, harshil.getConnectedMembers().get().getName());
   }
 
   @Test(expected = NoSuchUserPresentException.class)
-  @Order(5)
   public void testInvalidConnectedGroups() {
     User devansh = new User("devansh1");
     memberService.addUser(devansh);
@@ -120,7 +107,6 @@ public class UserTest {
   }
 
   @Test
-  @Order(6)
   public void testEqualUsers() {
     User devansh = new User(name);
 
@@ -130,7 +116,6 @@ public class UserTest {
   }
 
   @Test
-  @Order(7)
   public void testNotEqualUsers() {
     User devansh = new User(name);
     String devanshID = devansh.getId();
@@ -140,13 +125,12 @@ public class UserTest {
     String duplicatDevanshID = duplicateDevansh.getId();
     assertNotEquals(devanshID, duplicatDevanshID);
 
-    Group group = new Group("test",new ArrayList<>(),new ArrayList<>());
+    Group group = new Group("test", new ArrayList<>(), new ArrayList<>());
     assertNotEquals(devansh, duplicateDevansh);
     assertNotEquals(devansh, group);
   }
 
   @Test
-  @Order(8)
   public void testUserHashCode() {
     User devansh = new User(name);
     User anotherDevansh = new User(name);
@@ -155,7 +139,6 @@ public class UserTest {
   }
 
   @Test
-  @Order(9)
   public void testGetAllMembers() {
     User harshil = new User("harshil");
     Set<String> connectedMembers = new HashSet<>();
