@@ -12,6 +12,7 @@ import com.neu.prattle.service.MemberServiceImpl;
 import java.util.Optional;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -72,6 +73,14 @@ public class MemberController {
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createGroup(Group group) {
     accountService.addGroup(group);
+    return Response.ok().build();
+  }
+
+  @GET
+  @Path("/members")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response findAllMembers(String username){
+    accountService.findAllMembers(username);
     return Response.ok().build();
   }
 

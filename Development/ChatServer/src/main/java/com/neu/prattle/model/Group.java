@@ -18,6 +18,7 @@ import java.util.Optional;
 public class Group extends AbstractMember implements IGroup {
   private List<String> users;
   private List<String> admins;
+  private MemberService ms;
 
   @Override
   public String getName() {
@@ -40,6 +41,11 @@ public class Group extends AbstractMember implements IGroup {
   public Group(String name, List<String> users) {
     this.setName(name);
     this.users = new ArrayList<>(users);
+    ms = MemberServiceImpl.getInstance();
+    for(String username: users){
+      Optional <IMember> member = ms.findMemberByName(username);
+      member.ifPresent(iMember -> ((IUser) iMember).setGroupsForUser(this));
+    }
   }
 
   public Group() {
@@ -104,4 +110,5 @@ public class Group extends AbstractMember implements IGroup {
     });
     return allConnectedMembers;
   }
+
 }
