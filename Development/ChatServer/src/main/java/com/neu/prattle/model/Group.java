@@ -1,53 +1,51 @@
 package com.neu.prattle.model;
 
 import com.neu.prattle.exceptions.InvalidAdminException;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
- * A class to represent a group of users. Each Group consists of a list of all of it's users
- * also, the group contains another list that denotes the admin(s) of this group.
+ * A class to represent a group of users. Each Group consists of a list of all of it's users also,
+ * the group contains another list that denotes the admin(s) of this group.
  *
  * @author Harshil Mavani
  * @version 1.0 dated 2019-10-16
  */
-public class Group implements IGroup{
-  private String groupId;
-  private String groupName;
+public class Group extends AbstractMember implements IGroup {
   private List<String> users;
   private List<String> admins;
 
+  @Override
+  public String getName() {
+    return this.name;
+  }
+
   /**
    * A parameterized constructor that initializes all fields as required.
-   * @param name Name of the group.
-   * @param users List of users currently present in the group.
+   *
+   * @param name   Name of the group.
+   * @param users  List of users currently present in the group.
    * @param admins List of admins in the group that have privileges above normal users.
    */
   public Group(String name, List<String> users, List<String> admins) {
-    this.groupId = "auto-generated-id-here";
-    this.groupName = name;
+    this.setName(name);
     this.users = new ArrayList<>(users);
     this.admins = new ArrayList<>(admins);
   }
 
-  public Group(){
-
+  public Group(String name, List<String> users) {
+    this.setName(name);
+    this.users = new ArrayList<>(users);
   }
 
-  @Override
-  public String getGroupName() {
-    return this.groupName;
-  }
+  public Group() {
 
-  @Override
-  public void setGroupName(String groupName) {
-    this.groupName = groupName;
-  }
-
-  @Override
-  public String getGroupId() {
-    return groupId;
   }
 
   @Override
@@ -88,12 +86,24 @@ public class Group implements IGroup{
   /**
    * A private helper method to validate the admin and make sure that the entity passed as a
    * parameter is indeed an admin of the group.
-   * @param admin The name of the admin who needs to validated. Throws an unchecked exception
-   *              if the entity is not an admin of this group.
+   *
+   * @param admin The name of the admin who needs to validated. Throws an unchecked exception if the
+   *              entity is not an admin of this group.
    */
   private void validateAdmin(String admin) {
-    if(!this.admins.contains(admin)) {
-      throw new InvalidAdminException(admin + " is not an admin of " + this.groupName + " group");
+    if (!this.admins.contains(admin)) {
+      throw new InvalidAdminException(admin + " is not an admin of " + this.name + " group");
     }
+  }
+
+  @Override
+  public Set<String> getAllConnectedMembers() {
+    MemberService memberService = MemberServiceImpl.getInstance();
+    Set<String> allConnectedMembers = new HashSet<>();
+    users.forEach(member -> {
+      Optional<IMember> eachMember = memberService.findMemberByName(member);
+      allConnectedMembers.addAll(eachMember.get().getAllConnectedMembers());
+    });
+    return allConnectedMembers;
   }
 }

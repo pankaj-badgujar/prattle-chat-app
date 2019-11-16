@@ -3,15 +3,15 @@ package com.neu.prattle.modeltest;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.User;
-import com.neu.prattle.service.UserService;
-import com.neu.prattle.service.UserServiceImpl;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
 
-import junit.framework.TestCase;
-
-import org.junit.After;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
@@ -39,37 +39,38 @@ public class UserTest {
 
   @Test
   public void testUsersConnection() {
-    UserService userService = UserServiceImpl.getInstance();
+    MemberService userService = MemberServiceImpl.getInstance();
     String harshilName = "harshil";
-    User devansh = new User("Devansh");
+    User devansh = new User("Devansh2");
     User harshil = new User(harshilName);
     userService.addUser(devansh);
     userService.addUser(harshil);
 
-    harshil.connectTo(devansh.getName());
+    harshil.connectTo(devansh);
 
-    devansh.connectTo(harshilName);
+    devansh.connectTo(harshil);
 
-    assertEquals(devansh.getName(), harshil.getConnectedUsers());
-    assertEquals(harshilName, devansh.getConnectedUsers());
+    assertEquals(devansh.getName(), harshil.getConnectedMembers().get().getName());
+    assertEquals(harshilName, devansh.getConnectedMembers().get().getName());
 
     String pankajName = "Pankaj1";
     User pankaj = new User(pankajName);
     userService.addUser(pankaj);
 
 
-    harshil.connectTo(pankajName);
-    assertEquals(pankajName, harshil.getConnectedUsers());
+    harshil.connectTo(pankaj);
+    assertEquals(pankajName, harshil.getConnectedMembers().get().getName());
   }
 
   @Test(expected = NoSuchUserPresentException.class)
   public void testInvalidConnectedGroups() {
-    UserService userService = UserServiceImpl.getInstance();
+    MemberService userService = MemberServiceImpl.getInstance();
     User devansh = new User("devansh1");
     userService.addUser(devansh);
+    User harshil1 = new User("harshil1");
 
     // We are adding an invalid user which is yet not registered which should throw an exception
-    devansh.connectTo("harshil1");
+    devansh.connectTo(harshil1);
   }
 
   @Test
@@ -78,23 +79,37 @@ public class UserTest {
 
     User duplicateDevansh = new User(name);
 
-    assertTrue(devansh.equals(duplicateDevansh));
+    assertEquals(devansh, duplicateDevansh);
   }
 
   @Test
   public void testNotEqualUsers() {
     User devansh = new User(name);
-    String devanshID = devansh.getUserID();
+    String devanshID = devansh.getId();
 
     User duplicateDevansh = new User(name + "1");
 
-    String duplicatDevanshID = duplicateDevansh.getUserID();
+    String duplicatDevanshID = duplicateDevansh.getId();
     assertNotEquals(devanshID, duplicatDevanshID);
 
     Group group = new Group("test",new ArrayList<>(),new ArrayList<>());
-    assertFalse(devansh.equals(duplicateDevansh));
-    assertFalse(devansh.equals(group));
+    assertNotEquals(devansh, duplicateDevansh);
+    assertNotEquals(devansh, group);
   }
 
+  @Test
+  public void testUserHashCode() {
+    User devansh = new User(name);
+    User anotherDevansh = new User(name);
 
+    assertEquals(devansh.hashCode(), anotherDevansh.hashCode());
+  }
+
+  @Test
+  public void testGetAllMembers() {
+    User harshil = new User("harshil");
+    Set<String> connectedMembers = new HashSet<>();
+    connectedMembers.add("harshil");
+    assertEquals(connectedMembers, harshil.getAllConnectedMembers());
+  }
 }

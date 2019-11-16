@@ -1,25 +1,27 @@
 package com.neu.prattle.model;
 
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
-import com.neu.prattle.service.UserService;
-import com.neu.prattle.service.UserServiceImpl;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.Optional;
+import java.util.Set;
 
 /***
  * A User object represents a basic account information for a user.
  *
  * @author Devansh Gandhi
- * @version dated 2019-10-16
+ * @version 1.1 dated 2019-10-16
  */
-public class User {
+public class User extends AbstractMember implements IUser {
 
-  private String name;
-  private final String userID;
-  private String connectedTo;
+  private IMember connectedTo;
 
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
@@ -30,65 +32,32 @@ public class User {
   public User(@JsonProperty("name") String name) {
     this.name = name;
     this.connectedTo = null;
-    this.userID = UUID.randomUUID().toString();
   }
 
   public User() {
-    this.name = null;
-    userID = UUID.randomUUID().toString();
-    this.connectedTo = null;
+
   }
 
-  /**
-   * Getter method to get the name of the user attached to this object.
-   *
-   * @return Name of the user.
-   */
+  @Override
   public String getName() {
-    return name;
+    return this.name;
   }
 
-  /**
-   * Setter method to change the name of the user to the name provided in the parameter.
-   *
-   * @param name The changed name of this user.
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
+  @Override
+  public void connectTo(IMember otherMember) {
 
-  /**
-   * Getter method to get the unique user ID of this user.
-   *
-   * @return Unique user ID of the user.
-   */
-  public String getUserID() {
-    return userID;
-  }
+    MemberService allRegisteredMember = MemberServiceImpl.getInstance();
 
-  /**
-   * Getter to get all the currently connected user to this user.
-   *
-   * @return List of the users that are connected to this user.
-   */
-  public String getConnectedUsers() {
-    return connectedTo;
-  }
-
-  /**
-   * Setter methods to connect this users to the other users passed in the parameter.
-   *
-   * @param otherUsers users that needs to be connected to this user.
-   */
-  public void connectTo(String otherUsers) {
-
-    UserService allRegisteredUsers = UserServiceImpl.getInstance();
-
-    if (!allRegisteredUsers.findUserByName(otherUsers).isPresent()) {
-      throw new NoSuchUserPresentException(otherUsers);
+    if (!allRegisteredMember.findMemberByName(otherMember.getName()).isPresent()) {
+      throw new NoSuchUserPresentException(otherMember.getName());
     }
 
-    this.connectedTo = otherUsers;
+    this.connectedTo = otherMember;
+  }
+
+  @Override
+  public Optional<IMember> getConnectedMembers() {
+    return Optional.of(connectedTo);
   }
 
   /***
@@ -121,5 +90,12 @@ public class User {
 
     User user = (User) obj;
     return user.name.equals(this.name);
+  }
+
+  @Override
+  public Set<String> getAllConnectedMembers() {
+    Set<String> user = new HashSet<>();
+    user.add(name);
+    return user;
   }
 }
