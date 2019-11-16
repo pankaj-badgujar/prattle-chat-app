@@ -5,6 +5,7 @@ import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A service to represent and carry out operations on members rather than groups or users.
@@ -35,4 +36,10 @@ public interface MemberService {
    * @return An optional wrapper supplying the user.
    */
   Optional<IMember> findMemberByName(String name);
+
+  /**
+   * A method to find all users and groups.
+   * @return A list of members, either user or group.
+   */
+  Set<IMember> findAllMembers(String username);
 }

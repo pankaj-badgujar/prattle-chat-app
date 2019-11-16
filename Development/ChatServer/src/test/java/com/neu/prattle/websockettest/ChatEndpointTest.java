@@ -101,7 +101,7 @@ public class ChatEndpointTest {
   public void testConnectedMessageWhenUserIsPresent() throws IOException, EncodeException {
     final String userName = "mockUser";
     final User mockUser = new User(userName);
-    // Create an instance of argument captor. As the name goes, useful to capture argumemnts passed
+    // Create an instance of argument captor. As the name goes, useful to capture arguments passed
     // to our mock object.
     ArgumentCaptor<Message> argumentCaptor = ArgumentCaptor.forClass(Message.class);
 

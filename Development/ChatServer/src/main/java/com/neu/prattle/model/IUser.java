@@ -1,10 +1,11 @@
 package com.neu.prattle.model;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
- * @author Devansh Gandhi
- * @version 1.0 dated 11/1/2019
+ * @author Bhargavi Padhya
+ * @version 1.1 dated 11/15/2019
  */
 public interface IUser {
 
@@ -21,5 +22,19 @@ public interface IUser {
    * @param otherMember users that needs to be connected to this user.
    */
   void connectTo(IMember otherMember);
+
+  /**
+   * A method to return the list of all groups {@code this} user is a part of.
+   *
+   * @return list of all groups {@code this} user is a part of.
+   */
+  List<IMember> getGroupsForUser();
+
+  /**
+   * A method to add a group to the list of groups, {@code this} user is a part of.
+   *
+   * @param group the group to be added to the list of groups, {@code this} user is a part of.
+   */
+  void setGroupsForUser(IMember group);
 
 }

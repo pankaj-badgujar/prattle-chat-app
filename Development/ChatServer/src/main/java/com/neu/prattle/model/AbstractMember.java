@@ -15,6 +15,10 @@ public abstract class AbstractMember implements IMember {
     this.id = UUID.randomUUID().toString();
   }
 
+  @Override
+  public String getName() {
+    return this.name;
+  }
 
   @Override
   public void setName(String name) {
@@ -25,4 +29,5 @@ public abstract class AbstractMember implements IMember {
   public String getId() {
     return id;
   }
+
 }

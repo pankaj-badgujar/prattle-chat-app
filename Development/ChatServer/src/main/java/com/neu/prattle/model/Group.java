@@ -14,12 +14,14 @@ import java.util.Set;
  * A class to represent a group of users. Each Group consists of a list of all of it's users also,
  * the group contains another list that denotes the admin(s) of this group.
  *
- * @author Harshil Mavani
- * @version 1.0 dated 2019-10-16
+ * @author Bhargavi Padhya
+ * @version 1.1 dated 11/15/2019
  */
 public class Group extends AbstractMember implements IGroup {
+
   private List<String> users;
   private List<String> admins;
+  private MemberService ms;
 
   @Override
   public String getName() {
@@ -42,6 +44,11 @@ public class Group extends AbstractMember implements IGroup {
   public Group(String name, List<String> users) {
     this.setName(name);
     this.users = new ArrayList<>(users);
+    ms = MemberServiceImpl.getInstance();
+    for (String username : users) {
+      Optional<IMember> member = ms.findMemberByName(username);
+      member.ifPresent(iMember -> ((IUser) iMember).setGroupsForUser(this));
+    }
   }
 
   public Group() {
@@ -106,4 +113,5 @@ public class Group extends AbstractMember implements IGroup {
     });
     return allConnectedMembers;
   }
+
 }
