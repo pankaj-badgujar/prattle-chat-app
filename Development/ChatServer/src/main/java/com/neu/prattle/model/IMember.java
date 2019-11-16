@@ -1,6 +1,5 @@
 package com.neu.prattle.model;
 
-import java.util.List;
 import java.util.Set;
 
 /**
