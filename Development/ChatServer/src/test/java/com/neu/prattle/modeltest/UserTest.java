@@ -41,7 +41,7 @@ public class UserTest {
   public void testUsersConnection() {
     MemberService userService = MemberServiceImpl.getInstance();
     String harshilName = "harshil";
-    User devansh = new User("Devansh2");
+    User devansh = new User("Devansh10");
     User harshil = new User(harshilName);
     userService.addUser(devansh);
     userService.addUser(harshil);
@@ -53,7 +53,7 @@ public class UserTest {
     assertEquals(devansh.getName(), harshil.getConnectedMembers().get().getName());
     assertEquals(harshilName, devansh.getConnectedMembers().get().getName());
 
-    String pankajName = "Pankaj1";
+    String pankajName = "Pankaj108";
     User pankaj = new User(pankajName);
     userService.addUser(pankaj);
 

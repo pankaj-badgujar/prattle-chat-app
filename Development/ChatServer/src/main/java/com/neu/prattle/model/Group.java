@@ -56,11 +56,6 @@ public class Group extends AbstractMember implements IGroup {
     return allConnectedMembers;
   }
 
-  public Group(String name, List<String> users) {
-    this.setName(name);
-    this.users = new ArrayList<>(users);
-  }
-
   public Group() {
 
   }
