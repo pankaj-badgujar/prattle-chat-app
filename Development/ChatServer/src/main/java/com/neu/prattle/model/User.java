@@ -16,12 +16,13 @@ import java.util.Set;
 /***
  * A User object represents a basic account information for a user.
  *
- * @author Devansh Gandhi
- * @version 1.1 dated 2019-10-16
+ * @author Bhargavi Padhya
+ * @version 1.2 dated 2019-11-15
  */
 public class User extends AbstractMember implements IUser {
 
   private IMember connectedTo;
+  private List<IMember> groups;
 
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
@@ -32,6 +33,7 @@ public class User extends AbstractMember implements IUser {
   public User(@JsonProperty("name") String name) {
     this.name = name;
     this.connectedTo = null;
+    groups = new ArrayList<>();
   }
 
   public User() {
@@ -39,8 +41,8 @@ public class User extends AbstractMember implements IUser {
   }
 
   @Override
-  public String getName() {
-    return this.name;
+  public void setGroupsForUser(IMember group) {
+    groups.add(group);
   }
 
   @Override
@@ -85,8 +87,9 @@ public class User extends AbstractMember implements IUser {
    */
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof User))
+    if (!(obj instanceof User)) {
       return false;
+    }
 
     User user = (User) obj;
     return user.name.equals(this.name);
@@ -97,5 +100,10 @@ public class User extends AbstractMember implements IUser {
     Set<String> user = new HashSet<>();
     user.add(name);
     return user;
+  }
+
+  @Override
+  public List<IMember> getGroupsForUser() {
+    return groups;
   }
 }
