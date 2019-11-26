@@ -1,6 +1,7 @@
 package com.neu.prattle.model;
 
 import com.neu.prattle.exceptions.InvalidAdminException;
+import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
@@ -9,17 +10,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A class to represent a group of users. Each Group consists of a list of all of it's users also,
  * the group contains another list that denotes the admin(s) of this group.
  *
  * @author Harshil Mavani
- * @version 1.0 dated 2019-10-16
+ * @author Devansh Gandhi
+ * @version 2.0 dated 2019-11-26
  */
 public class Group extends AbstractMember implements IGroup {
   private List<String> users;
   private List<String> admins;
+  private Set<IMember> userMember;
+  private Set<IMember> adminsMember;
 
   @Override
   public String getName() {
@@ -37,6 +42,18 @@ public class Group extends AbstractMember implements IGroup {
     this.setName(name);
     this.users = new ArrayList<>(users);
     this.admins = new ArrayList<>(admins);
+    this.userMember = getAllIMembers(users);
+    this.adminsMember = getAllIMembers(admins);
+  }
+
+  private Set<IMember> getAllIMembers(List<String> userNames) {
+    MemberService memberService = MemberServiceImpl.getInstance();
+    Set<IMember> allConnectedMembers = new HashSet<>();
+    userNames.forEach(member -> {
+      Optional<IMember> eachMember = memberService.findMemberByName(member);
+      allConnectedMembers.add(eachMember.get());
+    });
+    return allConnectedMembers;
   }
 
   public Group(String name, List<String> users) {
@@ -48,9 +65,31 @@ public class Group extends AbstractMember implements IGroup {
 
   }
 
+  public Group(String name, Set<IMember> users, Set<IMember> admins) {
+    this.validateIMembers(users);
+    this.validateIMembers(admins);
+    this.setName(name);
+    this.userMember = users;
+    this.adminsMember = admins;
+    this.users = new ArrayList<>();
+    this.admins = new ArrayList<>();
+    users.forEach(user -> this.users.add(user.getName()));
+    admins.forEach(user -> this.admins.add(user.getName()));
+  }
+
+  private void validateIMembers(Set<IMember> members) {
+    members.forEach(member -> {
+      Optional<IMember> validateUser = MemberServiceImpl.getInstance().findMemberByName(member.getName());
+      if (!validateUser.isPresent()) {
+        throw new NoSuchUserPresentException(member.getName() + " is not a valid user.");
+      }
+    });
+  }
+
   @Override
   public void addUser(String admin, String user) {
     this.validateAdmin(admin);
+    this.validateUser(user);
     this.users.add(user);
   }
 
@@ -58,12 +97,20 @@ public class Group extends AbstractMember implements IGroup {
   public void removeUser(String admin, String userName) {
     this.validateAdmin(admin);
     this.users.remove(userName);
+    this.admins.remove(userName);
+    MemberServiceImpl.getInstance().findMemberByName(userName).ifPresent(member ->
+            this.userMember.remove(member));
+    MemberServiceImpl.getInstance().findMemberByName(userName).ifPresent(member ->
+            this.adminsMember.remove(member));
   }
 
   @Override
   public void makeAdmin(String admin, String adminName) {
     this.validateAdmin(admin);
+    this.validateUser(adminName);
     this.admins.add(adminName);
+    MemberServiceImpl.getInstance().findMemberByName(adminName).ifPresent(member ->
+            this.adminsMember.add(member));
   }
 
   @Override
@@ -71,6 +118,8 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateAdmin(adminToBeRemoved);
     this.admins.remove(adminToBeRemoved);
+    MemberServiceImpl.getInstance().findMemberByName(adminToBeRemoved).ifPresent(member ->
+            this.adminsMember.remove(member));
   }
 
   @Override
@@ -96,13 +145,23 @@ public class Group extends AbstractMember implements IGroup {
     }
   }
 
+  private void validateUser(String user) {
+    AtomicBoolean validate = new AtomicBoolean(false);
+    MemberServiceImpl.getInstance().findMemberByName(user).ifPresent(member ->
+            validate.set(true));
+    if (!validate.get()) {
+      throw new NoSuchUserPresentException("User with name user does not exist");
+    }
+  }
+
   @Override
   public Set<String> getAllConnectedMembers() {
     MemberService memberService = MemberServiceImpl.getInstance();
     Set<String> allConnectedMembers = new HashSet<>();
     users.forEach(member -> {
       Optional<IMember> eachMember = memberService.findMemberByName(member);
-      allConnectedMembers.addAll(eachMember.get().getAllConnectedMembers());
+      eachMember.ifPresent(memberInternal ->
+              allConnectedMembers.addAll(memberInternal.getAllConnectedMembers()));
     });
     return allConnectedMembers;
   }
