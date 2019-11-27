@@ -13,16 +13,24 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 /***
  * A User object represents a basic account information for a user.
  *
  * @author Bhargavi Padhya
  * @version 1.2 dated 2019-11-15
  */
+@Entity
 public class User extends AbstractMember implements IUser {
 
+  @Transient
   private IMember connectedTo;
+
+  @Transient
   private List<IMember> groups;
+
 
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
@@ -40,6 +48,11 @@ public class User extends AbstractMember implements IUser {
 
   }
 
+  public User(String name, MemberService ms) {
+    this.name = name;
+    this.ms = ms;
+  }
+
   @Override
   public void setGroupsForUser(IMember group) {
     groups.add(group);
@@ -47,13 +60,9 @@ public class User extends AbstractMember implements IUser {
 
   @Override
   public void connectTo(IMember otherMember) {
-
-    MemberService allRegisteredMember = MemberServiceImpl.getInstance();
-
-    if (!allRegisteredMember.findMemberByName(otherMember.getName()).isPresent()) {
+    if (!ms.findMemberByName(otherMember.getName()).isPresent()) {
       throw new NoSuchUserPresentException(otherMember.getName());
     }
-
     this.connectedTo = otherMember;
   }
 

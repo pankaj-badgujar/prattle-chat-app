@@ -21,7 +21,6 @@ public class Group extends AbstractMember implements IGroup {
 
   private List<String> users;
   private List<String> admins;
-  private MemberService ms;
 
   @Override
   public String getName() {
@@ -41,18 +40,52 @@ public class Group extends AbstractMember implements IGroup {
     this.admins = new ArrayList<>(admins);
   }
 
-  public Group(String name, List<String> users) {
+  /**
+   * A parameterized constructor that initializes all fields as required.
+   *
+   * @param name   Name of the group.
+   * @param users  List of users currently present in the group.
+   * @param admins List of admins in the group that have privileges above normal users.
+   */
+  public Group(String name, List<String> users, List<String> admins, MemberService ms) {
+    this.ms = ms;
     this.setName(name);
     this.users = new ArrayList<>(users);
-    ms = MemberServiceImpl.getInstance();
-    for (String username : users) {
-      Optional<IMember> member = ms.findMemberByName(username);
-      member.ifPresent(iMember -> ((IUser) iMember).setGroupsForUser(this));
-    }
+    this.admins = new ArrayList<>(admins);
+  }
+
+  /**
+   * A constructor used to create the group and assign this group name to all the users present in
+   * it
+   * @param name Name of the group.
+   * @param users List of users present in the group.
+   */
+  public Group(String name, List<String> users) {
+    this.assignGroupToUsers(name, users);
+  }
+
+  /**
+   * A constructor used for tests only.
+   * @param name Name of the group that needs to be created.
+   * @param users Users present in the group.
+   * @param ms MemberService instance that has been mocked.
+   */
+  public Group(String name, List<String> users, MemberService ms) {
+    this.ms = ms;
+    this.assignGroupToUsers(name, users);
   }
 
   public Group() {
 
+  }
+
+  private void assignGroupToUsers(String name, List<String> users) {
+    this.setName(name);
+    this.users = new ArrayList<>(users);
+    for (String username : users) {
+      Optional<IMember> member = ms.findMemberByName(username);
+      member.ifPresent(iMember -> ((IUser) iMember).setGroupsForUser(this));
+    }
   }
 
   @Override
@@ -105,10 +138,9 @@ public class Group extends AbstractMember implements IGroup {
 
   @Override
   public Set<String> getAllConnectedMembers() {
-    MemberService memberService = MemberServiceImpl.getInstance();
     Set<String> allConnectedMembers = new HashSet<>();
     users.forEach(member -> {
-      Optional<IMember> eachMember = memberService.findMemberByName(member);
+      Optional<IMember> eachMember = this.ms.findMemberByName(member);
       allConnectedMembers.addAll(eachMember.get().getAllConnectedMembers());
     });
     return allConnectedMembers;

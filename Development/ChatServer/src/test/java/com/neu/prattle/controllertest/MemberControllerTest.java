@@ -56,7 +56,6 @@ public class MemberControllerTest extends JerseyTest {
 
   @Test
   public void testConnectUserWithInvalidUser() throws JSONException {
-
     Entity<String> entityDevansh = Entity.entity("{\"name\": \"devansh\"}",
             MediaType.APPLICATION_JSON);
     target("/member/create/user").request().post(entityDevansh);
@@ -74,7 +73,7 @@ public class MemberControllerTest extends JerseyTest {
     Entity<String> entity = Entity.entity("{\"name\": \"FSE\"," + "\n \"users\": [],\n \"admins\": []\n }",
             MediaType.APPLICATION_JSON);
     Response response = target("/member/create/group").request().post(entity);
-    assertEquals(200, response.getStatus());
+    assertEquals(500, response.getStatus());
   }
 
   @Override

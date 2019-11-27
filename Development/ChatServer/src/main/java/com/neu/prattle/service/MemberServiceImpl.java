@@ -1,5 +1,8 @@
 package com.neu.prattle.service;
 
+import com.neu.prattle.dao.GroupDao;
+import com.neu.prattle.dao.SqlUserDao;
+import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.IMember;
@@ -11,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * Implementation for the interface {@link MemberService} which holds all the members for the
@@ -25,6 +30,13 @@ public class MemberServiceImpl implements MemberService {
   private final List<IMember> groups = new ArrayList<>();
   private static MemberService memberService;
 
+  @Inject
+  private UserDao userDao;
+
+  @Inject
+  private GroupDao groupDao;
+
+
   private MemberServiceImpl() {
   }
 
@@ -35,6 +47,7 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public synchronized void addGroup(Group group) {
     this.groups.add(group);
+    groupDao.createGroup(group);
   }
 
   @Override
@@ -44,6 +57,7 @@ public class MemberServiceImpl implements MemberService {
           user.getName()));
     }
     this.users.add(user);
+    userDao.createUser(user);
   }
 
   /**

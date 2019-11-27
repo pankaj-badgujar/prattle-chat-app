@@ -30,7 +30,7 @@ public interface IMember {
    *
    * @return Unique user ID of the user.
    */
-  String getId();
+  int getId();
 
   /**
    * Get all connected members to this member as a list of strings with their username.
