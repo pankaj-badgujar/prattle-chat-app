@@ -46,7 +46,7 @@ public class UserTest {
     memberService.addUser(bhargavi);
     memberService.addUser(mike);
     memberService.addUser(pranay);
-    Group group = new Group("fse", users);
+    Group group = new Group("fse", users, new ArrayList<>());
     memberService.addGroup(group);
 
     Set<IMember> allMembers = new HashSet<>();

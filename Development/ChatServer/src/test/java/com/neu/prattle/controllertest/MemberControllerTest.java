@@ -1,4 +1,3 @@
-
 package com.neu.prattle.controllertest;
 
 import com.neu.prattle.controller.MemberController;

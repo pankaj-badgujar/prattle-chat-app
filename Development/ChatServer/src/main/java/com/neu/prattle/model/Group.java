@@ -46,12 +46,20 @@ public class Group extends AbstractMember implements IGroup {
     this.adminsMember = getAllIMembers(admins);
   }
 
+  @Override
+  public void setGroupsForUser(IMember group) {
+    userMember.forEach(member -> {
+      member.setGroupsForUser(group);
+    });
+  }
+
   private Set<IMember> getAllIMembers(List<String> userNames) {
     MemberService memberService = MemberServiceImpl.getInstance();
     Set<IMember> allConnectedMembers = new HashSet<>();
     userNames.forEach(member -> {
       Optional<IMember> eachMember = memberService.findMemberByName(member);
       allConnectedMembers.add(eachMember.get());
+      eachMember.ifPresent(iMember->iMember.setGroupsForUser(this));
     });
     return allConnectedMembers;
   }
