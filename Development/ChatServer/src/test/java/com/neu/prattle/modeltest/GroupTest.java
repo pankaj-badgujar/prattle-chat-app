@@ -31,12 +31,12 @@ public class GroupTest {
 
   @Test
   public void testGroupInstantiation() {
-    User harshil = new User("Harshil");
+    User harshil = new User("Harshil100");
     User pankaj = new User("Pankaj");
     User devansh = new User("Devansh");
     User mike = new User("Mike");
     users = new ArrayList<>();
-    users.add("Harshil");
+    users.add("Harshil100");
     users.add("Devansh");
     users.add("Pankaj");
     users.add("Mike");
@@ -259,22 +259,38 @@ public class GroupTest {
 
   @Test
   public void testInvalidRemoveAdminRequest() {
+
+    User harshil = new User("Harshil200");
+    User pankaj = new User("Pankaj200");
+    User devansh = new User("Devansh200");
+    User mike = new User("Mike200");
+    User bhargavi = new User("Bhargavi200");
+    User vaibhav = new User("Vaibhav200");
+
+    MemberService memberService = MemberServiceImpl.getInstance();
+    memberService.addUser(harshil);
+    memberService.addUser(pankaj);
+    memberService.addUser(devansh);
+    memberService.addUser(mike);
+    memberService.addUser(bhargavi);
+    memberService.addUser(vaibhav);
+
     users = new ArrayList<>();
-    users.add("Harshil");
-    users.add("Devansh");
-    users.add("Pankaj");
-    users.add("Mike");
-    users.add("Bhargavi");
+    users.add("Harshil200");
+    users.add("Devansh200");
+    users.add("Pankaj200");
+    users.add("Mike200");
+    users.add("Bhargavi200");
 
     admins = new ArrayList<>();
-    admins.add("Mike");
+    admins.add("Mike200");
 
     group = new Group("FSE", users, admins);
 
     try {
-      ((Group) (group)).removeUser("Bhargavi", "Mike");
+      ((Group) (group)).removeUser("Bhargavi200", "Mike200");
     } catch (InvalidAdminException iae) {
-      assertEquals("Bhargavi is not an admin of FSE group", iae.getMessage());
+      assertEquals("Bhargavi200 is not an admin of FSE group", iae.getMessage());
     }
   }
 
