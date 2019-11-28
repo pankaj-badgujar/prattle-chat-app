@@ -30,11 +30,4 @@ public interface IUser {
    */
   List<IMember> getGroupsForUser();
 
-  /**
-   * A method to add a group to the list of groups, {@code this} user is a part of.
-   *
-   * @param group the group to be added to the list of groups, {@code this} user is a part of.
-   */
-  void setGroupsForUser(IMember group);
-
 }

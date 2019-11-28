@@ -46,7 +46,7 @@ public class UserTest {
     memberService.addUser(bhargavi);
     memberService.addUser(mike);
     memberService.addUser(pranay);
-    Group group = new Group("fse", users);
+    Group group = new Group("fse", users, new ArrayList<>());
     memberService.addGroup(group);
 
     Set<IMember> allMembers = new HashSet<>();
@@ -76,7 +76,7 @@ public class UserTest {
   @Test
   public void testUsersConnection() {
     String harshilName = "harshil";
-    User devansh = new User("Devansh2");
+    User devansh = new User("Devansh10");
     User harshil = new User(harshilName);
     memberService.addUser(devansh);
     memberService.addUser(harshil);
@@ -88,7 +88,7 @@ public class UserTest {
     assertEquals(devansh.getName(), harshil.getConnectedMembers().get().getName());
     assertEquals(harshilName, devansh.getConnectedMembers().get().getName());
 
-    String pankajName = "Pankaj1";
+    String pankajName = "Pankaj108";
     User pankaj = new User(pankajName);
     memberService.addUser(pankaj);
 

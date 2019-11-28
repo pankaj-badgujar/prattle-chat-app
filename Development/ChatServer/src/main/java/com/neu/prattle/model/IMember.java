@@ -1,5 +1,6 @@
 package com.neu.prattle.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Set;
  * @author Harshil Mavani
  * @version 1.0 dated 10/28/2019
  */
-public interface IMember {
+public interface IMember extends Serializable {
 
   /**
    * A method to return the name of this member.
@@ -39,4 +40,10 @@ public interface IMember {
    */
   Set<String> getAllConnectedMembers();
 
+  /**
+   * A method to add a group to the list of groups, {@code this} user is a part of.
+   *
+   * @param group the group to be added to the list of groups, {@code this} user is a part of.
+   */
+  void setGroupsForUser(IMember group);
 }
