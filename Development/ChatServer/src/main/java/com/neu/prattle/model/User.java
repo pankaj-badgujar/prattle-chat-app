@@ -50,6 +50,7 @@ public class User extends AbstractMember implements IUser {
 
   public User(String name, MemberService ms) {
     this.name = name;
+    this.groups = new ArrayList<>();
     this.ms = ms;
   }
 
