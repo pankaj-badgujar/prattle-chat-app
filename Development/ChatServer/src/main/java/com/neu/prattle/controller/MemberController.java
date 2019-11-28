@@ -9,10 +9,11 @@ import com.neu.prattle.model.UserConnector;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
-
 import java.util.Set;
-import javax.annotation.Generated;
+import java.util.stream.Collectors;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -78,13 +79,4 @@ public class MemberController {
     accountService.addGroup(group);
     return Response.ok().build();
   }
-
-  @GET
-  @Path("/members")
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Set<IMember> findAllMembers(String username){
-    return accountService.findAllMembers(username);
-  }
-
 }

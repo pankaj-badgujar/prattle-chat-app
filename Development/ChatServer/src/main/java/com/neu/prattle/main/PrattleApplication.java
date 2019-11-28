@@ -1,6 +1,7 @@
 package com.neu.prattle.main;
 
 import com.neu.prattle.controller.MemberController;
+import com.neu.prattle.controller.MemberController1;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,7 @@ public class PrattleApplication extends Application {
   public Set<Class<?>> getClasses() {
     logger.error("Application started.");
     resourceClasses.add(MemberController.class);
+    resourceClasses.add(MemberController1.class);
     return resourceClasses;
   }
 }
