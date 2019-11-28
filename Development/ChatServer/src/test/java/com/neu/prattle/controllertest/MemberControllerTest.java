@@ -1,4 +1,3 @@
-
 package com.neu.prattle.controllertest;
 
 import com.neu.prattle.controller.MemberController;
@@ -21,7 +20,7 @@ public class MemberControllerTest extends JerseyTest {
 
   @Test
   public void testCreateNewUser() {
-    Entity<String> entity = Entity.entity("{\"name\": \"Pankaj2\"}", MediaType.APPLICATION_JSON);
+    Entity<String> entity = Entity.entity("{\"name\": \"Pankaj20\"}", MediaType.APPLICATION_JSON);
     Response response = target("/member/create/user").request().post(entity);
     assertEquals(200, response.getStatus());
   }
