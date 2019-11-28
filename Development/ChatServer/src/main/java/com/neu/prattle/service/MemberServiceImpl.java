@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.log4j.Logger;
 
 /**
  * Implementation for the interface {@link MemberService} which holds all the members for the
@@ -24,6 +25,7 @@ public class MemberServiceImpl implements MemberService {
   private final List<IMember> users = new ArrayList<>();
   private final List<IMember> groups = new ArrayList<>();
   private static MemberService memberService;
+  private final static Logger logger = Logger.getLogger(MemberServiceImpl.class);
 
   private MemberServiceImpl() {
   }
@@ -35,15 +37,18 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public synchronized void addGroup(Group group) {
     this.groups.add(group);
+    logger.info("Group with the following name created: "+ group.getName());
   }
 
   @Override
   public synchronized void addUser(User user) {
     if (this.users.contains(user)) {
+      logger.error("User with the name "+user.getName()+" already exists.");
       throw new UserAlreadyPresentException(String.format("User already present with name: %s",
           user.getName()));
     }
     this.users.add(user);
+    logger.info("User with the following username created: "+ user.getName());
   }
 
   /**

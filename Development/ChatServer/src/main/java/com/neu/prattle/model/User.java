@@ -4,6 +4,7 @@ import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class User extends AbstractMember implements IUser {
 
   private IMember connectedTo;
   private List<IMember> groups;
+  private final static Logger logger = Logger.getLogger(User.class);
+
 
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
@@ -34,6 +37,7 @@ public class User extends AbstractMember implements IUser {
     this.name = name;
     this.connectedTo = null;
     groups = new ArrayList<>();
+    logger.info("User created with the following username: " + name);
   }
 
   public User() {
@@ -51,6 +55,8 @@ public class User extends AbstractMember implements IUser {
     MemberService allRegisteredMember = MemberServiceImpl.getInstance();
 
     if (!allRegisteredMember.findMemberByName(otherMember.getName()).isPresent()) {
+      logger.error(this.getName() + " tried to connect to the user: " + otherMember.getName()
+          + ", that doesn't exist.");
       throw new NoSuchUserPresentException(otherMember.getName());
     }
 

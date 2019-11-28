@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.apache.log4j.Logger;
 import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -36,6 +37,8 @@ import javax.websocket.server.ServerEndpoint;
  */
 @ServerEndpoint(value = "/chat/{username}", decoders = MessageDecoder.class, encoders = MessageEncoder.class)
 public class ChatEndpoint {
+
+  private final static Logger logger = Logger.getLogger(ChatEndpoint.class);
 
   /**
    * The account service.
@@ -79,7 +82,7 @@ public class ChatEndpoint {
       Message error = Message.messageBuilder()
               .setMessageContent(String.format("User %s could not be found", username))
               .build();
-
+      logger.warn(username + " doesn't exist.");
       session.getBasicRemote().sendObject(error);
       return;
     }
@@ -135,7 +138,7 @@ public class ChatEndpoint {
   /**
    * On error.
    *
-   * Handles situations when an error occurs.  Not implemented.
+   * Handles situations when an error occurs. Not implemented.
    *
    * @param session   the session with the problem
    * @param throwable the action to be taken.
@@ -143,6 +146,8 @@ public class ChatEndpoint {
   @OnError
   public void onError(Session session, Throwable throwable) {
     // Do error handling here
+    logger.warn("Socket timeout: " + session.getId());
+    logger.error("WebSocket error: " + throwable);
   }
 
   private void broadcastToTheConnectUser(String userFrom, Message message) {
@@ -172,6 +177,7 @@ public class ChatEndpoint {
           }
         } catch (EncodeException | NullPointerException | IOException e) {
           // Add a logger here to handle exception
+          logger.error(e.getMessage());
         }
       }
     });
