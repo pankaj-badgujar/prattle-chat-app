@@ -5,6 +5,8 @@ import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version 2.0 dated 2019-11-26
  */
 public class Group extends AbstractMember implements IGroup {
+
   private List<String> users;
   private List<String> admins;
   private Set<IMember> userMember;
@@ -38,36 +41,23 @@ public class Group extends AbstractMember implements IGroup {
    * @param users  List of users currently present in the group.
    * @param admins List of admins in the group that have privileges above normal users.
    */
-  public Group(String name, List<String> users, List<String> admins) {
+  public Group(@JsonProperty("name") String name,@JsonProperty("users") List<String> users,
+               @JsonProperty("admins") List<String> admins) {
     this.setName(name);
     this.users = new ArrayList<>(users);
+    getAllIMembers(users);
     this.admins = new ArrayList<>(admins);
     this.userMember = getAllIMembers(users);
     this.adminsMember = getAllIMembers(admins);
   }
 
-  @Override
-  public void setGroupsForUser(IMember group) {
-    userMember.forEach(member -> {
-      member.setGroupsForUser(group);
-    });
-  }
-
-  private Set<IMember> getAllIMembers(List<String> userNames) {
-    MemberService memberService = MemberServiceImpl.getInstance();
-    Set<IMember> allConnectedMembers = new HashSet<>();
-    userNames.forEach(member -> {
-      Optional<IMember> eachMember = memberService.findMemberByName(member);
-      allConnectedMembers.add(eachMember.get());
-      eachMember.ifPresent(iMember->iMember.setGroupsForUser(this));
-    });
-    return allConnectedMembers;
-  }
-
-  public Group() {
-
-  }
-
+  /**
+   * A parameterized constructor that initializes all fields as required.
+   *
+   * @param name   Name of the group.
+   * @param users  List of users currently present in the group.
+   * @param admins List of admins in the group that have privileges above normal users.
+   */
   public Group(String name, Set<IMember> users, Set<IMember> admins) {
     this.validateIMembers(users);
     this.validateIMembers(admins);
@@ -78,6 +68,23 @@ public class Group extends AbstractMember implements IGroup {
     this.admins = new ArrayList<>();
     users.forEach(user -> this.users.add(user.getName()));
     admins.forEach(user -> this.admins.add(user.getName()));
+    getAllIMembers(this.users);
+  }
+
+  @Override
+  public void setGroupsForUser(IMember group) {
+    userMember.forEach(member -> member.setGroupsForUser(group));
+  }
+
+  private Set<IMember> getAllIMembers(List<String> userNames) {
+    MemberService memberService = MemberServiceImpl.getInstance();
+    Set<IMember> allConnectedMembers = new HashSet<>();
+    userNames.forEach(member -> {
+      Optional<IMember> eachMember = memberService.findMemberByName(member);
+      allConnectedMembers.add(eachMember.get());
+      eachMember.ifPresent(iMember -> iMember.setGroupsForUser(this));
+    });
+    return allConnectedMembers;
   }
 
   private void validateIMembers(Set<IMember> members) {

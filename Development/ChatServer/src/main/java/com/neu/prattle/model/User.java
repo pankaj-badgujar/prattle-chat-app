@@ -23,6 +23,22 @@ public class User extends AbstractMember implements IUser {
 
   private IMember connectedTo;
   private List<IMember> groups;
+  private String password;
+
+
+  /**
+   * A constructor using which we can create an object of the class {@link User} which takes in the
+   * name of the user.
+   *
+   * @param name     The name of the user whose object needs to be created.
+   * @param password Password that will be used to authenticate the user during run time.
+   */
+  public User(@JsonProperty("username") String name, @JsonProperty("password") String password) {
+    this.name = name;
+    this.connectedTo = null;
+    groups = new ArrayList<>();
+    this.password = password;
+  }
 
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
@@ -30,10 +46,11 @@ public class User extends AbstractMember implements IUser {
    *
    * @param name The name of the user whose object needs to be created.
    */
-  public User(@JsonProperty("name") String name) {
+  public User(String name) {
     this.name = name;
     this.connectedTo = null;
     groups = new ArrayList<>();
+    password = "";
   }
 
   public User() {
@@ -60,6 +77,11 @@ public class User extends AbstractMember implements IUser {
   @Override
   public Optional<IMember> getConnectedMembers() {
     return Optional.of(connectedTo);
+  }
+
+  @Override
+  public boolean isCorrectPassword(String password) {
+    return password.equals(this.password);
   }
 
   /***
