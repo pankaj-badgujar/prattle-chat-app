@@ -4,6 +4,7 @@ import com.neu.prattle.dao.GroupDao;
 import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.InvalidAdminException;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
+import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
@@ -79,6 +80,13 @@ public class GroupTest {
     assertEquals("MSD", group.getName());
     assertEquals(((Group) (group)).getUsers().toString(), users.toString());
     assertEquals(((Group) (group)).getAdmins().toString(), admins.toString());
+  }
+
+  @Test(expected = UserAlreadyPresentException.class)
+  public void groupAlreadyPresentException() {
+    Group group = new Group("FSE", new LinkedList<>(), new LinkedList<>(), memberService);
+    memberService.addGroup(group);
+    memberService.addGroup(group);
   }
 
   @Test (expected = NoSuchUserPresentException.class)

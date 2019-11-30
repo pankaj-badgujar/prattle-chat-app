@@ -3,6 +3,7 @@ package com.neu.prattle.modeltest;
 import com.neu.prattle.dao.GroupDao;
 import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
+import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
@@ -85,6 +86,13 @@ public class UserTest {
     String changedName = "Devansh";
     user.setName(changedName);
     assertEquals(changedName, user.getName());
+  }
+
+  @Test(expected = UserAlreadyPresentException.class)
+  public void userAlreadyPresentTest(){
+    User user = new User(name, memberService);
+    memberService.addUser(user);
+    memberService.addUser(user);
   }
 
   @Test
