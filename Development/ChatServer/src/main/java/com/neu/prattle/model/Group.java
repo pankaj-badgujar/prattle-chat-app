@@ -165,6 +165,11 @@ public class Group extends AbstractMember implements IGroup {
   }
 
   @Override
+  public IMemberDTO getDTO() {
+    return new GroupDTO(this.name,this.admins,this.users);
+  }
+
+  @Override
   public Set<String> getAllConnectedMembers() {
     MemberService memberService = MemberServiceImpl.getInstance();
     Set<String> allConnectedMembers = new HashSet<>();

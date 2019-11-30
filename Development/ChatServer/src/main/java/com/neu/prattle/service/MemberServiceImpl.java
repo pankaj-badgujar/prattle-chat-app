@@ -80,9 +80,8 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Set<IMember> findAllMembers(String username) {
-    Set<IMember> allMembers = new HashSet<>();
     Optional<IMember> member = findMemberByName(username);
-    allMembers.addAll(users);
+    Set<IMember> allMembers = new HashSet<>(users);
     member.ifPresent(allMembers::remove);
     member.ifPresent(iMember -> allMembers.addAll(((IUser) iMember).getGroupsForUser()));
     return allMembers;

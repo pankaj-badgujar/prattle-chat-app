@@ -8,7 +8,8 @@ import java.util.Set;
  * details.
  *
  * @author Harshil Mavani
- * @version 1.0 dated 10/28/2019
+ * @author Devansh Gandhi
+ * @version 2.0 dated 11/30/2019
  */
 public interface IMember extends Serializable {
 
@@ -46,4 +47,12 @@ public interface IMember extends Serializable {
    * @param group the group to be added to the list of groups, {@code this} user is a part of.
    */
   void setGroupsForUser(IMember group);
+
+  /**
+   * Get the data transfer object for the this member that could be used to send a copy of data
+   * outside model.
+   *
+   * @return Data transfer object for the IMember.
+   */
+  IMemberDTO getDTO();
 }

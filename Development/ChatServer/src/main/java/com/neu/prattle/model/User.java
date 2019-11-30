@@ -26,6 +26,11 @@ public class User extends AbstractMember implements IUser {
   private String password;
 
 
+  @Override
+  public IMemberDTO getDTO() {
+    return new UserDTO(this.name,this.connectedTo,this.groups);
+  }
+
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the
    * name of the user.

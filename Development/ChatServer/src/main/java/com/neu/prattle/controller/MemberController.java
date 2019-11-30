@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.IMember;
+import com.neu.prattle.model.IMemberDTO;
 import com.neu.prattle.model.IUser;
 import com.neu.prattle.model.User;
 import com.neu.prattle.model.UserConnector;
@@ -13,9 +14,10 @@ import com.neu.prattle.service.MemberServiceImpl;
 
 import org.json.JSONObject;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -28,7 +30,7 @@ import javax.ws.rs.core.Response;
  * This a controller class for the members creation and connection.
  *
  * @author Devansh Gandhi
- * @version 1.0 dated 11/1/2019
+ * @version 2.0 dated 11/30/2019
  */
 @Path("/member")
 public class MemberController {
@@ -51,7 +53,7 @@ public class MemberController {
       return Response.status(409).build();
     }
 
-    return Response.ok().entity((new Gson()).toJson(user)).build();
+    return Response.ok().entity((new Gson()).toJson(user.getDTO())).build();
   }
 
   /**
@@ -63,12 +65,13 @@ public class MemberController {
   @POST
   @Path("/validate/user")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response validateUserAccount(List<String> details) {
+  public Response validateUserAccount(Map<String, String> details) {
 
-    Optional<IMember> user = accountService.findMemberByName(details.get(0));
-    IMember member = user.isPresent() && ((IUser) user.get()).isCorrectPassword(details.get(1)) ?
+    Optional<IMember> user = accountService.findMemberByName(details.get("username"));
+    IMember member = user.isPresent() && ((IUser) user.get()).isCorrectPassword(details.get("password")) ?
             user.get() : null;
-    return Response.ok().entity((new Gson()).toJson(member)).build();
+    return member != null ? Response.ok().entity((new Gson()).toJson(member.getDTO())).build() :
+            Response.status(409).build();
   }
 
   /**
@@ -87,9 +90,9 @@ public class MemberController {
     if (fromMember.isPresent() && toMember.isPresent()) {
       ((IUser) fromMember.get()).connectTo(toMember.get());
     } else {
-      return Response.status(409).build();
+      return Response.status(409).entity("false").build();
     }
-    return Response.ok().build();
+    return Response.ok().entity("true").build();
   }
 
   /**
@@ -107,7 +110,7 @@ public class MemberController {
     } catch (UserAlreadyPresentException e) {
       return Response.status(409).build();
     }
-    return Response.ok().build();
+    return Response.ok().entity(new Gson().toJson(group.getDTO())).build();
   }
 
   /**
@@ -124,6 +127,7 @@ public class MemberController {
     Gson gson = new Gson();
     JSONObject jsonObject = new JSONObject(username);
     Set<IMember> memberSet = accountService.findAllMembers((String) jsonObject.get("username"));
-    return gson.toJson(memberSet);
+    Set<IMemberDTO> dto = memberSet.stream().map(IMember::getDTO).collect(Collectors.toSet());
+    return gson.toJson(dto);
   }
 }
