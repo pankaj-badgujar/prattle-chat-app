@@ -122,4 +122,13 @@ public class MemberControllerTest {
     Response res = controller.findAllMembers("harshil");
     assertEquals(200, res.getStatus());
   }
+
+  @Test
+  public void testFindAllMembersUserNotFound() {
+    MemberServiceImpl impl = Mockito.mock(MemberServiceImpl.class);
+    when(impl.findMemberByName(any(String.class))).thenReturn(Optional.empty());
+    controller = new MemberController(impl);
+    Response res = controller.findAllMembers("devansh");
+    assertEquals(404, res.getStatus());
+  }
 }
