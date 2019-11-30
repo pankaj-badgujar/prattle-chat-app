@@ -52,6 +52,12 @@ public class User extends AbstractMember implements IUser {
     this.password = password;
   }
 
+  public User(String name, String password, MemberService ms) {
+    this.ms = ms;
+    this.name = name;
+    this.password = password;
+    groups = new ArrayList<>();
+  }
 
   /**
    * A constructor using which we can create an object of the class {@link User} which takes in the

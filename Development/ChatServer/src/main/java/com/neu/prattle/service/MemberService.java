@@ -19,9 +19,8 @@ public interface MemberService {
    * A method to create groups as posted by the user in the payload. The group consists all
    * necessary details to initialize the object and store it.
    *
-   * @param group The group that is requested to be made.
    */
-  Group addGroup(Group group);
+  void addGroup(Group group);
 
 
   /***

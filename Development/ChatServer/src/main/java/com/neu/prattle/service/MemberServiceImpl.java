@@ -52,7 +52,6 @@ public class MemberServiceImpl implements MemberService {
     }
     this.groups.add(group);
     groupDao.createGroup(group);
-    return group;
   }
 
   @Override

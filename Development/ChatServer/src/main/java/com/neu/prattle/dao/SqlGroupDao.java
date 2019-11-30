@@ -7,6 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import javax.inject.Inject;
+
 /**
  * Concrete implementation of the group dao. This implementation uses a sql databse.
  *
@@ -16,6 +18,8 @@ import org.hibernate.cfg.Configuration;
 public class SqlGroupDao implements GroupDao{
 
   private static SqlGroupDao groupDao;
+
+  @Inject
   private Session session;
 
   static {

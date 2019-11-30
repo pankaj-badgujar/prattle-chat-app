@@ -33,6 +33,9 @@ public class UserTest {
   @Mock
   private UserDao userDao;
 
+  @Mock
+  private GroupDao groupDao;
+
   @InjectMocks
   private MemberServiceImpl memberService;
 
@@ -47,9 +50,9 @@ public class UserTest {
   @Test
   public void testAFindAllMembers() {
 
-    User bhargavi = new User("bhargavi");
-    User mike = new User("mike");
-    User pranay = new User("pranay");
+    User bhargavi = new User("bhargavi", memberService);
+    User mike = new User("mike", memberService);
+    User pranay = new User("pranay", memberService);
 
     List<String> users = new ArrayList<>();
     users.add("bhargavi");

@@ -130,8 +130,7 @@ public class MemberController {
   @Consumes(MediaType.APPLICATION_JSON)
   public String findAllMembers(String username) {
     Gson gson = new Gson();
-    JSONObject jsonObject = new JSONObject(username);
-    Set<IMember> memberSet = accountService.findAllMembers((String) jsonObject.get("username"));
+    Set<IMember> memberSet = accountService.findAllMembers(username);
     Set<IMemberDTO> dto = memberSet.stream().map(IMember::getDTO).collect(Collectors.toSet());
     return gson.toJson(dto);
   }

@@ -16,13 +16,15 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -83,8 +85,41 @@ public class MemberControllerTest {
 
   @Test
   public void testCreateNewGroup() {
-    when(memberService.addGroup(any(Group.class))).thenReturn(new Group("", new LinkedList<>(), new LinkedList<>(), memberService));
+    MemberServiceImpl impl = Mockito.mock(MemberServiceImpl.class);
+    doNothing().when(impl).addGroup(any(Group.class));
+    controller = new MemberController(impl);
     Response response = controller.createGroup(new Group());
     assertEquals(200, response.getStatus());
+  }
+
+  @Test
+  public void testValidateUserAccountWhenUserAbsent(){
+    Map<String, String> map = new HashMap<>();
+    map.put("username", "harshil");
+    map.put("password", "test");
+    Response res = controller.validateUserAccount(map);
+    assertEquals(401, res.getStatus());
+  }
+
+  @Test
+  public void testValidateUserAccountWhenUserPresent(){
+
+    User user = new User("harshil", "password", memberService);
+    memberService.addUser(user);
+
+    Map<String, String> map = new HashMap<>();
+    map.put("username", "harshil");
+    map.put("password", "password");
+    Response res = controller.validateUserAccount(map);
+    assertEquals(200, res.getStatus());
+  }
+
+  @Test
+  public void testFindAllMembers() {
+    MemberServiceImpl impl = Mockito.mock(MemberServiceImpl.class);
+    when(impl.findAllMembers(any(String.class))).thenReturn(new HashSet<>());
+    controller = new MemberController(impl);
+    controller.findAllMembers("test");
+
   }
 }

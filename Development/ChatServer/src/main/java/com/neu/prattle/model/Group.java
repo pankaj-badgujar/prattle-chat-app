@@ -34,9 +34,6 @@ public class Group extends AbstractMember implements IGroup {
     return this.name;
   }
 
-  public Group(@JsonProperty("name") String name,@JsonProperty("users") List<String> users,
-               @JsonProperty("admins") List<String> admins) {this.initializeFields(name, users, admins)}
-
   /**
    * A parameterized constructor that initializes all fields as required.
    *
@@ -44,7 +41,8 @@ public class Group extends AbstractMember implements IGroup {
    * @param users  List of users currently present in the group.
    * @param admins List of admins in the group that have privileges above normal users.
    */
-  public Group(String name, List<String> users, List<String> admins) {
+  public Group(@JsonProperty("name") String name,@JsonProperty("users") List<String> users,
+               @JsonProperty("admins") List<String> admins) {
     this.initializeFields(name, users, admins);
   }
 
@@ -80,15 +78,7 @@ public class Group extends AbstractMember implements IGroup {
    * @param admins List of admins in the group that have privileges above normal users.
    */
   public Group(String name, Set<IMember> users, Set<IMember> admins) {
-    this.validateIMembers(users);
-    this.validateIMembers(admins);
-    this.setName(name);
-    this.userMember = users;
-    this.adminsMember = admins;
-    this.users = new ArrayList<>();
-    this.admins = new ArrayList<>();
-    users.forEach(user -> this.users.add(user.getName()));
-    admins.forEach(user -> this.admins.add(user.getName()));
+    this.assignGroupToUsers(name, users, admins);
     getAllIMembers(this.users);
   }
 
@@ -109,10 +99,6 @@ public class Group extends AbstractMember implements IGroup {
 
   public Group() {
 
-  }
-
-  public Group(String name, Set<IMember> users, Set<IMember> admins) {
-    this.assignGroupToUsers(name, users, admins);
   }
 
   public Group(String name, Set<IMember> users, Set<IMember> admins, MemberService ms) {
