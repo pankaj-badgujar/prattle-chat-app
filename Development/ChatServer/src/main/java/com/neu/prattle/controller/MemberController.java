@@ -32,7 +32,7 @@ import javax.ws.rs.core.Response;
  * @author Devansh Gandhi
  * @version 2.0 dated 11/30/2019
  */
-@Path("/member")
+@Path("/")
 public class MemberController {
 
   private MemberService accountService = MemberServiceImpl.getInstance();
@@ -44,7 +44,7 @@ public class MemberController {
    * @return -> A Response indicating the outcome of the requested operation.
    */
   @POST
-  @Path("/create/user")
+  @Path("user")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createUserAccount(User user) {
     try {
@@ -63,7 +63,7 @@ public class MemberController {
    * @return -> A Response indicating the outcome of the requested operation.
    */
   @POST
-  @Path("/validate/user")
+  @Path("auth")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response validateUserAccount(Map<String, String> details) {
 
@@ -82,7 +82,7 @@ public class MemberController {
    * @return -> A Response indicating the outcome of the requested operation.Response
    */
   @POST
-  @Path("/connect/member")
+  @Path("connect")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response connectToUserAccounts(UserConnector users) {
     Optional<IMember> fromMember = accountService.findMemberByName(users.getUserFrom());
@@ -102,7 +102,7 @@ public class MemberController {
    * @return -> A Response indicating the outcome of the requested operation.
    */
   @POST
-  @Path("/create/group")
+  @Path("group")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createGroup(Group group) {
     try {
@@ -121,7 +121,7 @@ public class MemberController {
    * @return -> Json object with all the IMember in th group.
    */
   @GET
-  @Path("/classmember")
+  @Path("members")
   @Consumes(MediaType.APPLICATION_JSON)
   public String findAllMembers(String username) {
     Gson gson = new Gson();
