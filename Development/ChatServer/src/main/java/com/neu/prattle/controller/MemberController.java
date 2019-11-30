@@ -71,7 +71,7 @@ public class MemberController {
     IMember member = user.isPresent() && ((IUser) user.get()).isCorrectPassword(details.get("password")) ?
             user.get() : null;
     return member != null ? Response.ok().entity((new Gson()).toJson(member.getDTO())).build() :
-            Response.status(409).build();
+            Response.status(401).build();
   }
 
   /**
