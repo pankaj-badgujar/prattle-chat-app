@@ -12,14 +12,11 @@ import com.neu.prattle.model.UserConnector;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -129,7 +126,7 @@ public class MemberController {
   @Path("members")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response findAllMembers(String username) {
-    if(accountService.findMemberByName(username).isEmpty()){
+    if(!accountService.findMemberByName(username).isPresent()){
       return Response.status(404).entity("User with name " + username + " does not exist").build();
     }
     Gson gson = new Gson();

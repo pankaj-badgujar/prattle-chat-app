@@ -117,9 +117,9 @@ public class MemberControllerTest {
   @Test
   public void testFindAllMembers() {
     MemberServiceImpl impl = Mockito.mock(MemberServiceImpl.class);
-    when(impl.findAllMembers(any(String.class))).thenReturn(new HashSet<>());
+    when(impl.findMemberByName(any(String.class))).thenReturn(Optional.of(new User("harshil", impl)));
     controller = new MemberController(impl);
-    controller.findAllMembers("test");
-
+    Response res = controller.findAllMembers("harshil");
+    assertEquals(200, res.getStatus());
   }
 }

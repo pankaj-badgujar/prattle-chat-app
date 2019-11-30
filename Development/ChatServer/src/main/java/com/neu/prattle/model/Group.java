@@ -209,7 +209,7 @@ public class Group extends AbstractMember implements IGroup {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Group) {
-      return ((Group) obj).getId().equals(this.getId());
+      return ((Group) obj).getId() == (this.getId());
     }
     return false;
   }
