@@ -128,10 +128,13 @@ public class MemberController {
   @GET
   @Path("members")
   @Consumes(MediaType.APPLICATION_JSON)
-  public String findAllMembers(String username) {
+  public Response findAllMembers(String username) {
+    if(accountService.findMemberByName(username).isEmpty()){
+      return Response.status(404).entity("User with name " + username + " does not exist").build();
+    }
     Gson gson = new Gson();
     Set<IMember> memberSet = accountService.findAllMembers(username);
     Set<IMemberDTO> dto = memberSet.stream().map(IMember::getDTO).collect(Collectors.toSet());
-    return gson.toJson(dto);
+    return Response.ok().entity(gson.toJson(dto)).build();
   }
 }
