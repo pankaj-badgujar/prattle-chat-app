@@ -2,7 +2,6 @@ package com.neu.prattle.model;
 
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
-import com.neu.prattle.service.MemberServiceImpl;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 

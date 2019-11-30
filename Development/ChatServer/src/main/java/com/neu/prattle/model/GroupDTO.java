@@ -1,9 +1,7 @@
 package com.neu.prattle.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GroupDTO implements IMemberDTO {
 

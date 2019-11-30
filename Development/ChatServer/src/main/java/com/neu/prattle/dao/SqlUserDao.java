@@ -4,7 +4,6 @@ import com.neu.prattle.model.User;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 /**
@@ -15,6 +14,10 @@ public class SqlUserDao implements UserDao {
 
   private static SqlUserDao userDao;
   private Session session;
+
+  public SqlUserDao(Session session) {
+    this.session = session;
+  }
 
   static {
     userDao = new SqlUserDao();

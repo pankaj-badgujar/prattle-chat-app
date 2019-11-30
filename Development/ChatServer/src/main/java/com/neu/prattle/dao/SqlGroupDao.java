@@ -35,6 +35,10 @@ public class SqlGroupDao implements GroupDao{
     this.session = sf.openSession();
   }
 
+  public SqlGroupDao(Session session) {
+    this.session = session;
+  }
+
   /**
    * A public method to return the singleton instance.
    * @return Singleton instance created by sql group dao.

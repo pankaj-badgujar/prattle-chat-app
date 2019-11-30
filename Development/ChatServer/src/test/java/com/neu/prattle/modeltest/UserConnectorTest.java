@@ -14,4 +14,11 @@ public class UserConnectorTest {
     assertEquals("Devansh",connection.getUserFrom());
     assertEquals("Harshil",connection.getUserTo());
   }
+
+  @Test
+  public void testDefaultConstructor() {
+    UserConnector connection = new UserConnector();
+    assertNull(connection.getUserFrom());
+    assertNull(connection.getUserTo());
+  }
 }
