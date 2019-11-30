@@ -71,7 +71,7 @@ public class GroupTest {
     memberService.addUser(pankaj);
     memberService.addUser(devansh);
     memberService.addUser(mike);
-    
+
     group = new Group("FSE", users, admins, memberService);
     assertEquals("FSE", group.getName());
 

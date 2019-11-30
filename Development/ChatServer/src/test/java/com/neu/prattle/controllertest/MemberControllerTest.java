@@ -5,16 +5,18 @@ import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.User;
+import com.neu.prattle.model.UserConnector;
 import com.neu.prattle.service.MemberServiceImpl;
 
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -63,11 +65,20 @@ public class MemberControllerTest {
 
   @Test
   public void testConnectTwoUsers() {
+    MemberServiceImpl impl = Mockito.mock(MemberServiceImpl.class);
+    when(impl.findMemberByName(anyString())).thenReturn(Optional.of(new User("harshil", impl)));
+    controller = new MemberController(impl);
+    Response res = controller.connectToUserAccounts(new UserConnector("harshil", "devamsh"));
+    assertEquals(200, res.getStatus());
   }
 
   @Test
-  public void testConnectUserWithInvalidUser() throws JSONException {
-
+  public void testConnectUserWithInvalidUser() {
+    MemberServiceImpl impl = Mockito.mock(MemberServiceImpl.class);
+    when(impl.findMemberByName(anyString())).thenReturn(Optional.empty());
+    controller = new MemberController(impl);
+    Response res = controller.connectToUserAccounts(new UserConnector("harshil", "devamsh"));
+    assertEquals(409, res.getStatus());
   }
 
   @Test
