@@ -28,7 +28,7 @@ public class User extends AbstractMember implements IUser {
 
   @Override
   public IMemberDTO getDTO() {
-    return new UserDTO(this.name,this.connectedTo,this.groups);
+    return new UserDTO(this.name, this.connectedTo, this.groups);
   }
 
   /**
@@ -64,7 +64,9 @@ public class User extends AbstractMember implements IUser {
 
   @Override
   public void setGroupsForUser(IMember group) {
-    groups.add(group);
+    if (!groups.contains(group)) {
+      groups.add(group);
+    }
   }
 
   @Override

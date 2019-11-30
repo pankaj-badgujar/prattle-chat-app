@@ -10,6 +10,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,7 +42,7 @@ public class Group extends AbstractMember implements IGroup {
    * @param users  List of users currently present in the group.
    * @param admins List of admins in the group that have privileges above normal users.
    */
-  public Group(@JsonProperty("name") String name,@JsonProperty("users") List<String> users,
+  public Group(@JsonProperty("name") String name, @JsonProperty("users") List<String> users,
                @JsonProperty("admins") List<String> admins) {
     this.setName(name);
     this.users = new ArrayList<>(users);
@@ -166,7 +167,20 @@ public class Group extends AbstractMember implements IGroup {
 
   @Override
   public IMemberDTO getDTO() {
-    return new GroupDTO(this.name,this.admins,this.users);
+    return new GroupDTO(this.name, this.admins, this.users);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.getId());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Group) {
+      return ((Group) obj).getId().equals(this.getId());
+    }
+    return false;
   }
 
   @Override
