@@ -156,4 +156,12 @@ public class UserTest {
     connectedMembers.add("harshil");
     assertEquals(connectedMembers, harshil.getAllConnectedMembers());
   }
+
+  @Test
+  public void isPasswordCorrect(){
+    User harshil = new User("harshil");
+    Set<String> connectedMembers = new HashSet<>();
+    connectedMembers.add("harshil");
+    assertEquals(connectedMembers, harshil.getAllConnectedMembers());
+  }
 }

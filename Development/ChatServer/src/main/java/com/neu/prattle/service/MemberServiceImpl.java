@@ -45,7 +45,11 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public synchronized Group addGroup(Group group) {
+  public synchronized void addGroup(Group group) {
+    if(this.groups.contains(group)){
+      throw new UserAlreadyPresentException(String.format("Group already present with name: %s",
+              group.getName()));
+    }
     this.groups.add(group);
     groupDao.createGroup(group);
     return group;
@@ -99,4 +103,3 @@ public class MemberServiceImpl implements MemberService {
     return allMembers;
   }
 }
-
