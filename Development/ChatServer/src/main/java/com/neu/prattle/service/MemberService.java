@@ -21,15 +21,15 @@ public interface MemberService {
    *
    * @param group The group that is requested to be made.
    */
-  void addGroup(Group group);
+  Group addGroup(Group group);
 
 
   /***
    * Tries to add a user in the system
    * @param user User object
-   *
+   * @return User the newly created user that was requested.
    */
-  void addUser(User user);
+  User addUser(User user);
 
   /**
    * @param name -> The name of the user.

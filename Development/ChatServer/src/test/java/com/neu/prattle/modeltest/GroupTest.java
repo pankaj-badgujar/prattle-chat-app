@@ -18,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +51,7 @@ public class GroupTest {
     MockitoAnnotations.initMocks(this);
     when(groupDao.createGroup(any(Group.class))).thenReturn(new Group());
   }
+
   @Test
   public void testGroupInstantiation() {
     User harshil = new User("Harshil100", memberService);
@@ -69,7 +71,7 @@ public class GroupTest {
     memberService.addUser(pankaj);
     memberService.addUser(devansh);
     memberService.addUser(mike);
-
+    
     group = new Group("FSE", users, admins, memberService);
     assertEquals("FSE", group.getName());
 

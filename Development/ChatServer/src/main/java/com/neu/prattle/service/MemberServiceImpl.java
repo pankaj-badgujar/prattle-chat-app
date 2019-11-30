@@ -45,19 +45,21 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public synchronized void addGroup(Group group) {
+  public synchronized Group addGroup(Group group) {
     this.groups.add(group);
     groupDao.createGroup(group);
+    return group;
   }
 
   @Override
-  public synchronized void addUser(User user) {
+  public synchronized User addUser(User user) {
     if (this.users.contains(user)) {
       throw new UserAlreadyPresentException(String.format("User already present with name: %s",
           user.getName()));
     }
     this.users.add(user);
     userDao.createUser(user);
+    return user;
   }
 
   /**
@@ -90,9 +92,8 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Set<IMember> findAllMembers(String username) {
-    Set<IMember> allMembers = new HashSet<>();
     Optional<IMember> member = findMemberByName(username);
-    allMembers.addAll(users);
+    Set<IMember> allMembers = new HashSet<>(users);
     member.ifPresent(allMembers::remove);
     member.ifPresent(iMember -> allMembers.addAll(((IUser) iMember).getGroupsForUser()));
     return allMembers;

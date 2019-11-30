@@ -64,41 +64,10 @@ public class Group extends AbstractMember implements IGroup {
     this.userMember = getAllIMembers(users);
     this.adminsMember = getAllIMembers(admins);
   }
-//
-//  /**
-//   * A constructor used to create the group and assign this group name to all the users present in
-//   * it
-//   * @param name Name of the group.
-//   * @param users List of users present in the group.
-//   */
-//  public Group(String name, List<String> users) {
-//    this.assignGroupToUsers(name, users);
-//  }
 
-//  /**
-//   * A constructor used for tests only.
-//   * @param name Name of the group that needs to be created.
-//   * @param users Users present in the group.
-//   * @param ms MemberService instance that has been mocked.
-//   */
-//  public Group(String name, List<String> users, MemberService ms) {
-//    this.ms = ms;
-//    this.assignGroupToUsers(name, users);
-//  }
-
-  // private void assignGroupToUsers(String name, List<String> users) {
-  //   this.setName(name);
-  //   this.users = new ArrayList<>(users);
-  //   for (String username : users) {
-  //     Optional<IMember> member = ms.findMemberByName(username);
-  //     member.ifPresent(iMember -> ((IUser) iMember).setGroupsForUser(this));
-  //   }
-  // }
   @Override
   public void setGroupsForUser(IMember group) {
-    userMember.forEach(member -> {
-      member.setGroupsForUser(group);
-    });
+    userMember.forEach(member -> member.setGroupsForUser(group));
   }
 
   private Set<IMember> getAllIMembers(List<String> userNames) {

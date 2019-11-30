@@ -33,9 +33,6 @@ public class UserTest {
   @Mock
   private UserDao userDao;
 
-  @Mock
-  private GroupDao groupDao;
-
   @InjectMocks
   private MemberServiceImpl memberService;
 
@@ -45,7 +42,6 @@ public class UserTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     when(userDao.createUser(any(User.class))).thenReturn(new User());
-    // memberService = MemberServiceImpl.getInstance();
   }
 
   @Test

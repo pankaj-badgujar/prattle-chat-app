@@ -9,11 +9,14 @@ import com.neu.prattle.model.UserConnector;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
+import org.mockito.InjectMocks;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -32,6 +35,10 @@ import javax.ws.rs.core.Response;
 public class MemberController {
 
   private MemberService accountService = MemberServiceImpl.getInstance();
+
+  public MemberController(MemberService accountService) {
+    this.accountService = accountService;
+  }
 
   /**
    * Handles a HTTP POST request for user creation
