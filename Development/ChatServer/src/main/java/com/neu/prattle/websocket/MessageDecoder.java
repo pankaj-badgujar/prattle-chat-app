@@ -11,11 +11,10 @@ import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import com.neu.prattle.model.Message;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The Class MessageDecoder.
@@ -26,7 +25,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
     private static ObjectMapper objectMapper = new ObjectMapper();
     
     /** The logger. */
-    private Logger logger = Logger.getLogger(this.getClass().getName());
+    private Logger logger = Logger.getLogger(MessageDecoder.class);
 
     /**
      * Decode.
@@ -42,7 +41,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
         try {
             message = objectMapper.readValue(s, Message.class);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, e.getMessage());
+            logger.warn("Error in decoding: "+e.getMessage());
         }
         return message;
     }
