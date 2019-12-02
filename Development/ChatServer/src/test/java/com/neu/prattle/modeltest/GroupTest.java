@@ -196,6 +196,12 @@ public class GroupTest {
 
   @Test
   public void testValidRemoveAdminRequest() {
+    users = new ArrayList<>();
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
+
     admins = new ArrayList<>();
     admins.add(mikeName);
 
@@ -211,6 +217,12 @@ public class GroupTest {
 
   @Test(expected = InvalidAdminException.class)
   public void testInvalidRemoveAdminRequest() {
+    users = new ArrayList<>();
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
+
     admins = new ArrayList<>();
     admins.add(mikeName);
 

@@ -49,31 +49,6 @@ public class UserTest {
   }
 
   @Test
-  public void testAFindAllMembers() {
-
-    User bhargavi = new User("bhargavi", memberService);
-    User mike = new User("mike", memberService);
-    User pranay = new User("pranay", memberService);
-
-    List<String> users = new ArrayList<>();
-    users.add("bhargavi");
-    users.add("mike");
-
-    memberService.addUser(bhargavi);
-    memberService.addUser(mike);
-    memberService.addUser(pranay);
-    Group group = new Group("fse", users, new ArrayList<>(), memberService);
-    memberService.addGroup(group);
-
-    Set<IMember> allMembers = new HashSet<>();
-    allMembers.add(mike);
-    allMembers.add(pranay);
-    allMembers.add(group);
-
-    assertTrue(memberService.findAllMembers("bhargavi").containsAll(allMembers));
-  }
-
-  @Test
   public void testUserCreation() {
     User user = new User(name);
     assertEquals(name, user.getName());
@@ -88,20 +63,11 @@ public class UserTest {
     assertEquals(changedName, user.getName());
   }
 
-  @Test(expected = UserAlreadyPresentException.class)
-  public void userAlreadyPresentTest(){
-    User user = new User(name, memberService);
-    memberService.addUser(user);
-    memberService.addUser(user);
-  }
-
   @Test
   public void testUsersConnection() {
     String harshilName = "harshil";
     User devansh = new User("Devansh2", memberService);
     User harshil = new User(harshilName, memberService);
-    memberService.addUser(devansh);
-    memberService.addUser(harshil);
 
     harshil.connectTo(devansh);
 
@@ -112,7 +78,6 @@ public class UserTest {
 
     String pankajName = "Pankaj108";
     User pankaj = new User(pankajName);
-    memberService.addUser(pankaj);
 
     harshil.connectTo(pankaj);
     assertEquals(pankajName, harshil.getConnectedMembers().get().getName());
