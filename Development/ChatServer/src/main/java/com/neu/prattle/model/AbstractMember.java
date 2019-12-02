@@ -15,9 +15,10 @@ import javax.persistence.Transient;
 @MappedSuperclass
 public abstract class AbstractMember implements IMember {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy= GenerationType.AUTO)
   private int id;
+
+  @Id
   protected String name;
 
   @Transient

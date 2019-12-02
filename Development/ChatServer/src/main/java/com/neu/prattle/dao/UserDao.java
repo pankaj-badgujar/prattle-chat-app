@@ -1,6 +1,10 @@
 package com.neu.prattle.dao;
 
+import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * An interface that exposes basic operations on the User table.
@@ -16,4 +20,11 @@ public interface UserDao {
    * @return User that was successfully created.
    */
   User createUser(User user);
+
+  /**
+   * A method to retrieve a particular user from the database.
+   * @return The user who matches the username as provided.
+   */
+  Optional<IMember> getUser(String username);
+
 }

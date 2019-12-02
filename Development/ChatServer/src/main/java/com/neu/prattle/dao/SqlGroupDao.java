@@ -1,11 +1,14 @@
 package com.neu.prattle.dao;
 
 import com.neu.prattle.model.Group;
+import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -40,7 +43,9 @@ public class SqlGroupDao implements GroupDao{
    * @return Singleton instance created by sql group dao.
    */
   public static SqlGroupDao getInstance() {
-    groupDao = groupDao == null ? (new SqlGroupDao()) : groupDao;
+    if(groupDao == null) {
+      groupDao = new SqlGroupDao();
+    }
     return groupDao;
   }
 
@@ -48,5 +53,10 @@ public class SqlGroupDao implements GroupDao{
   public Group createGroup(Group group) {
     session.save(group);
     return group;
+  }
+
+  @Override
+  public Optional<IMember> findGroup(String name) {
+    return Optional.ofNullable(session.get(Group.class, name));
   }
 }

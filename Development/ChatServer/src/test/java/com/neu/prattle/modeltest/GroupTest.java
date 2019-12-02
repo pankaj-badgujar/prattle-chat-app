@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -44,6 +45,19 @@ public class GroupTest {
   @Mock
   private UserDao userDao;
 
+  private User harshil;
+  private User pankaj;
+  private User devansh;
+  private User mike;
+  private User vaibhav;
+
+  private String harshilName = "Harshil";
+  private String pankajName = "Pankaj";
+  private String devanshName = "Devansh";
+  private String mikeName = "Mike";
+  private String bhargaviName = "Bhargavi";
+  private String vaibhavName = "Vaibhav";
+
   @InjectMocks
   private MemberServiceImpl memberService;
 
@@ -51,27 +65,32 @@ public class GroupTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     when(groupDao.createGroup(any(Group.class))).thenReturn(new Group());
+    when(userDao.getUser(harshilName)).thenReturn(Optional.of(new User(harshilName, memberService)));
+    when(userDao.getUser(pankajName)).thenReturn(Optional.of(new User(pankajName, memberService)));
+    when(userDao.getUser(mikeName)).thenReturn(Optional.of(new User(mikeName, memberService)));
+    when(userDao.getUser(bhargaviName)).thenReturn(Optional.of(new User(bhargaviName, memberService)));
+    when(userDao.getUser(devanshName)).thenReturn(Optional.of(new User(devanshName, memberService)));
+    when(userDao.getUser(vaibhavName)).thenReturn(Optional.empty());
+    when(groupDao.findGroup(vaibhavName)).thenReturn(Optional.empty());
+
+    harshil = new User(harshilName, memberService);
+    pankaj = new User(pankajName, memberService);
+    vaibhav = new User(vaibhavName, memberService);
+    devansh = new User(devanshName, memberService);
+    mike = new User(mikeName, memberService);
+
   }
 
   @Test
   public void testGroupInstantiation() {
-    User harshil = new User("Harshil100", memberService);
-    User pankaj = new User("Pankaj", memberService);
-    User devansh = new User("Devansh", memberService);
-    User mike = new User("Mike", memberService);
     users = new ArrayList<>();
-    users.add("Harshil100");
-    users.add("Devansh");
-    users.add("Pankaj");
-    users.add("Mike");
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
 
     admins = new ArrayList<>();
-    admins.add("Mike");
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
+    admins.add(mikeName);
 
     group = new Group("FSE", users, admins, memberService);
     assertEquals("FSE", group.getName());
@@ -91,251 +110,126 @@ public class GroupTest {
 
   @Test (expected = NoSuchUserPresentException.class)
   public void testInValidAddAdminRequest() {
-    User harshil = new User("Harshil1",memberService);
-    User pankaj = new User("Pankaj1",memberService);
-    User devansh = new User("Devansh1",memberService);
-    User mike = new User("Mike1",memberService);
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
-
     users = new ArrayList<>();
-    users.add("Harshil1");
-    users.add("Devansh1");
-    users.add("Pankaj1");
-    users.add("Mike1");
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
 
     admins = new ArrayList<>();
-    admins.add("Mike1");
-    group = new Group("FSE", users, admins,memberService);
-    ((Group) (group)).makeAdmin("Mike1", "Vaibhav");
-    admins.add("Vaibhav");
+    admins.add(bhargaviName);
+    group = new Group("FSE", users, admins, memberService);
+
+    ((Group) (group)).makeAdmin(bhargaviName, vaibhavName);
+    admins.add(vaibhavName);
     assertEquals(((Group) (group)).getAdmins().toString(), admins.toString());
   }
 
   @Test
   public void testValidAddUserRequest() {
-    User harshil = new User("Harshil2", memberService);
-    User pankaj = new User("Pankaj2", memberService);
-    User devansh = new User("Devansh2", memberService);
-    User mike = new User("Mike2", memberService);
-    User bhargavi = new User("Bhargavi", memberService);
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
-    memberService.addUser(bhargavi);
-
     users = new ArrayList<>();
-    users.add("Harshil2");
-    users.add("Devansh2");
-    users.add("Pankaj2");
-    users.add("Mike2");
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
 
     admins = new ArrayList<>();
-    admins.add("Mike2");
+    admins.add(mikeName);
 
     group = new Group("FSE", users, admins, memberService);
-    ((Group) (group)).addUser("Mike2", "Bhargavi");
-    users.add("Bhargavi");
+    ((Group) (group)).addUser(mikeName, bhargaviName);
+    users.add(bhargaviName);
     assertEquals(((Group) (group)).getUsers().toString(), users.toString());
   }
 
-  @Test
+  @Test(expected = InvalidAdminException.class)
   public void testInvalidAddAdminRequest() {
 
-    User harshil = new User("Harshil3", memberService);
-    User pankaj = new User("Pankaj3", memberService);
-    User devansh = new User("Devansh3", memberService);
-    User mike = new User("Mike3", memberService);
-    User bhargavi = new User("Bhargavi1", memberService);
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
-    memberService.addUser(bhargavi);
-
     users = new ArrayList<>();
-    users.add("Harshil3");
-    users.add("Devansh3");
-    users.add("Pankaj3");
-    users.add("Mike3");
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
 
     admins = new ArrayList<>();
-    admins.add("Mike3");
+    admins.add(mikeName);
 
     group = new Group("FSE", users, admins, memberService);
+    ((Group) (group)).makeAdmin(bhargaviName, harshilName);
 
-    try {
-      ((Group) (group)).makeAdmin("Bhargavi1", "Vaibhav");
-    } catch (InvalidAdminException iae) {
-      assertEquals("Bhargavi1 is not an admin of FSE group", iae.getMessage());
-    }
   }
 
   @Test
   public void testValidRemoveUserRequest() {
-    User harshil = new User("Harshil4");
-    User pankaj = new User("Pankaj4");
-    User devansh = new User("Devansh4");
-    User mike = new User("Mike4");
-    User bhargavi = new User("Bhargavi4");
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
-    memberService.addUser(bhargavi);
-
-
     users = new ArrayList<>();
-    users.add("Harshil4");
-    users.add("Devansh4");
-    users.add("Pankaj4");
-    users.add("Mike4");
-    users.add("Bhargavi4");
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
+    users.add(bhargaviName);
 
     admins = new ArrayList<>();
-    admins.add("Mike4");
+    admins.add(mikeName);
     group = new Group("FSE", users, admins, memberService);
 
-    ((Group) (group)).removeUser("Mike4", "Bhargavi4");
-    users.remove("Bhargavi4");
+    ((Group) (group)).removeUser(mikeName, bhargaviName);
+    users.remove(bhargaviName);
     assertEquals(((Group) (group)).getUsers().toString(), users.toString());
   }
 
-  @Test
+  @Test(expected = InvalidAdminException.class)
   public void testInvalidRemoveUserRequest() {
-    User harshil = new User("Harshil9");
-    User pankaj = new User("Pankaj9");
-    User devansh = new User("Devansh9");
-    User mike = new User("Mike9");
-    User bhargavi = new User("Bhargavi9");
-    User vaibhav = new User("Vaibhav9");
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
-    memberService.addUser(bhargavi);
-    memberService.addUser(vaibhav);
-
     users = new ArrayList<>();
-    users.add("Harshil9");
-    users.add("Devansh9");
-    users.add("Pankaj9");
-    users.add("Mike9");
-    users.add("Bhargavi9");
-    users.add("Vaibhav9");
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
+    users.add(bhargaviName);
 
     admins = new ArrayList<>();
-    admins.add("Mike9");
+    admins.add(mikeName);
 
     group = new Group("FSE", users, admins, memberService);
-    try {
-      ((Group) (group)).removeUser("Harshil7", "Bhargavi7");
-    } catch (InvalidAdminException iae) {
-      assertEquals("Harshil7 is not an admin of FSE group", iae.getMessage());
-    }
+    ((Group) (group)).removeUser(harshilName, bhargaviName);
+
   }
 
   @Test
   public void testValidRemoveAdminRequest() {
-    User harshil = new User("Harshil7");
-    User pankaj = new User("Pankaj7");
-    User devansh = new User("Devansh7");
-    User mike = new User("Mike7");
-    User bhargavi = new User("Bhargavi7");
-    User vaibhav = new User("Vaibhav7");
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
-    memberService.addUser(bhargavi);
-    memberService.addUser(vaibhav);
-
-    users = new ArrayList<>();
-    users.add("Harshil7");
-    users.add("Devansh7");
-    users.add("Pankaj7");
-    users.add("Mike7");
-    users.add("Bhargavi7");
-    users.add("Vaibhav7");
-
     admins = new ArrayList<>();
-    admins.add("Mike7");
+    admins.add(mikeName);
 
     group = new Group("FSE", users, admins, memberService);
-    ((Group) (group)).makeAdmin("Mike7", "Vaibhav7");
-    admins.add("Vaibhav7");
+    ((Group) (group)).makeAdmin(mikeName, harshilName);
+    admins.add(harshilName);
     assertEquals(((Group) (group)).getAdmins().toString(), admins.toString());
 
-    ((Group) (group)).removeAdmin("Mike7", "Vaibhav7");
-    admins.remove("Vaibhav7");
+    ((Group) (group)).removeAdmin(mikeName,harshilName);
+    admins.remove(harshilName);
     assertEquals(((Group) (group)).getAdmins().toString(), admins.toString());
   }
 
-  @Test
+  @Test(expected = InvalidAdminException.class)
   public void testInvalidRemoveAdminRequest() {
-
-    User harshil = new User("Harshil200");
-    User pankaj = new User("Pankaj200");
-    User devansh = new User("Devansh200");
-    User mike = new User("Mike200");
-    User bhargavi = new User("Bhargavi200");
-    User vaibhav = new User("Vaibhav200");
-
-    memberService.addUser(harshil);
-    memberService.addUser(pankaj);
-    memberService.addUser(devansh);
-    memberService.addUser(mike);
-    memberService.addUser(bhargavi);
-    memberService.addUser(vaibhav);
-
-    users = new ArrayList<>();
-    users.add("Harshil200");
-    users.add("Devansh200");
-    users.add("Pankaj200");
-    users.add("Mike200");
-    users.add("Bhargavi200");
-
     admins = new ArrayList<>();
-    admins.add("Mike200");
+    admins.add(mikeName);
 
     group = new Group("FSE", users, admins, memberService);
-
-    try {
-      ((Group) (group)).removeUser("Bhargavi200", "Mike200");
-    } catch (InvalidAdminException iae) {
-      assertEquals("Bhargavi200 is not an admin of FSE group", iae.getMessage());
-    }
+    ((Group) (group)).removeUser(bhargaviName, mikeName);
   }
 
   @Test
   public void testGetAllMembers() {
-    User harshil = new User("Harshil5", memberService);
-    User devansh = new User("Pankaj5", memberService);
-    User pankaj = new User("Devansh5", memberService);
-    User mike = new User("Mike5", memberService);
 
     users = new ArrayList<>();
-    users.add("Harshil5");
-    users.add("Devansh5");
-    users.add("Pankaj5");
-    users.add("Mike5");
+    users.add(harshilName);
+    users.add(devanshName);
+    users.add(pankajName);
+    users.add(mikeName);
+    users.add(bhargaviName);
 
     admins = new ArrayList<>();
-    admins.add("Mike5");
-
-    memberService.addUser(harshil);
-    memberService.addUser(devansh);
-    memberService.addUser(pankaj);
-    memberService.addUser(mike);
+    admins.add(mikeName);
 
     group = new Group("FSE1", users, admins, memberService);
 
@@ -344,16 +238,6 @@ public class GroupTest {
 
   @Test
   public void testIMemberConstructor() {
-    User harshil = new User("Harshil6");
-    User devansh = new User("Pankaj6");
-    User pankaj = new User("Devansh6");
-    User mike = new User("Mike6");
-
-    memberService.addUser(harshil);
-    memberService.addUser(devansh);
-    memberService.addUser(pankaj);
-    memberService.addUser(mike);
-
     Set<IMember> user = new HashSet<>();
     user.add(harshil);
     user.add(devansh);
@@ -371,20 +255,13 @@ public class GroupTest {
 
   @Test(expected = NoSuchUserPresentException.class)
   public void testInvalidMemberGroup(){
-    User harshil = new User("Harshil60");
-    User devansh = new User("Pankaj60");
-    User pankaj = new User("Devansh60");
-    User mike = new User("Mike60");
-
-    memberService.addUser(harshil);
-    memberService.addUser(devansh);
-    memberService.addUser(pankaj);
 
     Set<IMember> user = new HashSet<>();
     user.add(harshil);
     user.add(devansh);
     user.add(pankaj);
     user.add(mike);
+    user.add(vaibhav);
 
     Set<IMember> admin = new HashSet<>();
     admin.add(mike);
