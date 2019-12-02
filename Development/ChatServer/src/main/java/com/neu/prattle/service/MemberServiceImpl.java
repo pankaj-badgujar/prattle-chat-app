@@ -70,10 +70,11 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   public synchronized Optional<IMember> findMemberByName(String memberName) {
-    List<IMember> members = new ArrayList<>();
-    members.addAll(users);
-    members.addAll(groups);
-    return members.stream().filter(member -> member.getName().equals(memberName)).findAny();
+    Optional<IMember> member = userDao.getUser(memberName);
+    if(member.isPresent()) {
+      return member;
+    }
+    return groupDao.findGroup(memberName);
   }
 
   /**

@@ -3,8 +3,6 @@ package com.neu.prattle.model;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
-import java.util.UUID;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,9 +15,10 @@ import javax.persistence.Transient;
 @MappedSuperclass
 public abstract class AbstractMember implements IMember {
 
-  @Id
   @GeneratedValue(strategy= GenerationType.AUTO)
   private int id;
+
+  @Id
   protected String name;
 
   @Transient

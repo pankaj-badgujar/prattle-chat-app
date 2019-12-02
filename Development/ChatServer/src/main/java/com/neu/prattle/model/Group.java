@@ -3,7 +3,6 @@ package com.neu.prattle.model;
 import com.neu.prattle.exceptions.InvalidAdminException;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
-import com.neu.prattle.service.MemberServiceImpl;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -65,7 +64,6 @@ public class Group extends AbstractMember implements IGroup {
   private void initializeFields(String name, List<String> users, List<String> admins) {
     this.setName(name);
     this.users = new ArrayList<>(users);
-    getAllIMembers(users);
     this.admins = new ArrayList<>(admins);
     this.userMember = getAllIMembers(users);
     this.adminsMember = getAllIMembers(admins);
@@ -80,7 +78,6 @@ public class Group extends AbstractMember implements IGroup {
    */
   public Group(String name, Set<IMember> users, Set<IMember> admins) {
     this.assignGroupToUsers(name, users, admins);
-    getAllIMembers(this.users);
   }
 
   @Override
@@ -140,10 +137,8 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.users.remove(userName);
     this.admins.remove(userName);
-    MemberServiceImpl.getInstance().findMemberByName(userName).ifPresent(member ->
-            this.userMember.remove(member));
-    MemberServiceImpl.getInstance().findMemberByName(userName).ifPresent(member ->
-            this.adminsMember.remove(member));
+    this.ms.findMemberByName(userName).ifPresent(member -> this.userMember.remove(member));
+    this.ms.findMemberByName(userName).ifPresent(member -> this.adminsMember.remove(member));
   }
 
   @Override
@@ -151,8 +146,7 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateUser(adminName);
     this.admins.add(adminName);
-    MemberServiceImpl.getInstance().findMemberByName(adminName).ifPresent(member ->
-            this.adminsMember.add(member));
+    this.ms.findMemberByName(adminName).ifPresent(member -> this.adminsMember.add(member));
   }
 
   @Override
@@ -160,8 +154,7 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateAdmin(adminToBeRemoved);
     this.admins.remove(adminToBeRemoved);
-    MemberServiceImpl.getInstance().findMemberByName(adminToBeRemoved).ifPresent(member ->
-            this.adminsMember.remove(member));
+    this.ms.findMemberByName(adminToBeRemoved).ifPresent(member -> this.adminsMember.remove(member));
   }
 
   @Override
@@ -189,8 +182,7 @@ public class Group extends AbstractMember implements IGroup {
 
   private void validateUser(String user) {
     AtomicBoolean validate = new AtomicBoolean(false);
-    this.ms.findMemberByName(user).ifPresent(member ->
-            validate.set(true));
+    this.ms.findMemberByName(user).ifPresent(member -> validate.set(true));
     if (!validate.get()) {
       throw new NoSuchUserPresentException("User with name user does not exist");
     }
