@@ -1,14 +1,19 @@
 package com.neu.prattle.modeltest;
 
+import com.neu.prattle.dao.GroupDao;
+import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
+import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
-import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,26 +23,37 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Bhargavi Padhya
  * @version version 1.1 dated 11/15/2019
  */
 public class UserTest {
+  @Mock
+  private UserDao userDao;
+
+  @Mock
+  private GroupDao groupDao;
+
+  @InjectMocks
+  private MemberServiceImpl memberService;
 
   private final String name = "devansh";
-  private MemberService memberService;
 
   @Before
   public void setup() {
-    memberService = MemberServiceImpl.getInstance();
+    MockitoAnnotations.initMocks(this);
+    when(userDao.createUser(any(User.class))).thenReturn(new User());
   }
 
   @Test
   public void testAFindAllMembers() {
-    User bhargavi = new User("bhargavi");
-    User mike = new User("mike");
-    User pranay = new User("pranay");
+
+    User bhargavi = new User("bhargavi", memberService);
+    User mike = new User("mike", memberService);
+    User pranay = new User("pranay", memberService);
 
     List<String> users = new ArrayList<>();
     users.add("bhargavi");
@@ -46,7 +62,7 @@ public class UserTest {
     memberService.addUser(bhargavi);
     memberService.addUser(mike);
     memberService.addUser(pranay);
-    Group group = new Group("fse", users, new ArrayList<>());
+    Group group = new Group("fse", users, new ArrayList<>(), memberService);
     memberService.addGroup(group);
 
     Set<IMember> allMembers = new HashSet<>();
@@ -54,8 +70,7 @@ public class UserTest {
     allMembers.add(pranay);
     allMembers.add(group);
 
-    Set<IMember> im = memberService.findAllMembers("bhargavi");
-    assertTrue("true", memberService.findAllMembers("bhargavi").containsAll(allMembers));
+    assertTrue(memberService.findAllMembers("bhargavi").containsAll(allMembers));
   }
 
   @Test
@@ -73,11 +88,18 @@ public class UserTest {
     assertEquals(changedName, user.getName());
   }
 
+  @Test(expected = UserAlreadyPresentException.class)
+  public void userAlreadyPresentTest(){
+    User user = new User(name, memberService);
+    memberService.addUser(user);
+    memberService.addUser(user);
+  }
+
   @Test
   public void testUsersConnection() {
     String harshilName = "harshil";
-    User devansh = new User("Devansh10");
-    User harshil = new User(harshilName);
+    User devansh = new User("Devansh2", memberService);
+    User harshil = new User(harshilName, memberService);
     memberService.addUser(devansh);
     memberService.addUser(harshil);
 
@@ -117,13 +139,13 @@ public class UserTest {
 
   @Test
   public void testNotEqualUsers() {
-    User devansh = new User(name);
-    String devanshID = devansh.getId();
+    User devansh = new User(name, memberService);
+    int devanshID = devansh.getId();
 
-    User duplicateDevansh = new User(name + "1");
+    User duplicateDevansh = new User(name + "1", memberService);
+    int duplicatDevanshID = duplicateDevansh.getId();
 
-    String duplicatDevanshID = duplicateDevansh.getId();
-    assertNotEquals(devanshID, duplicatDevanshID);
+    assertEquals(devanshID, duplicatDevanshID);
 
     Group group = new Group("test", new ArrayList<>(), new ArrayList<>());
     assertNotEquals(devansh, duplicateDevansh);
@@ -140,6 +162,14 @@ public class UserTest {
 
   @Test
   public void testGetAllMembers() {
+    User harshil = new User("harshil");
+    Set<String> connectedMembers = new HashSet<>();
+    connectedMembers.add("harshil");
+    assertEquals(connectedMembers, harshil.getAllConnectedMembers());
+  }
+
+  @Test
+  public void isPasswordCorrect(){
     User harshil = new User("harshil");
     Set<String> connectedMembers = new HashSet<>();
     connectedMembers.add("harshil");

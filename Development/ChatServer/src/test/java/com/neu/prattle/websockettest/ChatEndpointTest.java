@@ -1,9 +1,10 @@
 package com.neu.prattle.websockettest;
 
 
+import com.neu.prattle.dao.GroupDao;
+import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.model.Message;
 import com.neu.prattle.model.User;
-import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 import com.neu.prattle.websocket.ChatEndpoint;
 
@@ -11,17 +12,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import javax.websocket.EncodeException;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,20 +32,28 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ChatEndpointTest {
 
-  // Mock instance of userService
-  private MemberService userService;
   // Actual instance whose behavior is going to be tested.
   private ChatEndpoint chatEndpoint;
 
   // Mock instance of Session
   private Session session;
 
+  @Mock
+  private UserDao userDao;
+
+  @Mock
+  private GroupDao groupDao;
+
+  @InjectMocks
+  private MemberServiceImpl userService;
+
   /***
    * Called up each test before invocation.
    */
   @Before
   public void setUp() {
-    userService = mock(MemberServiceImpl.class);
+    MockitoAnnotations.initMocks(this);
+    when(userDao.createUser(any(User.class))).thenReturn(new User());
     chatEndpoint = new ChatEndpoint();
     session = mock(Session.class);
   }
@@ -51,15 +62,12 @@ public class ChatEndpointTest {
    * Tests the behavior of onOpen method when a user attempts to connect to
    * the messaging system. If the user is not present, an appropriate error message
    * should be returned indicating the user is not present in the system.
-   *
-   * @throws IOException
-   * @throws EncodeException
    */
   @Test
   public void testErrorMessageWhenUserIsNotPresent() throws IOException, EncodeException {
 
     final String userName = "mockUser";
-    // Create an instance of argument captor. As the name goes, useful to capture argumemnts passed
+    // Create an instance of argument captor. As the name goes, useful to capture arguments passed
     // to our mock object.
     ArgumentCaptor<Message> argumentCaptor = ArgumentCaptor.forClass(Message.class);
 
@@ -67,7 +75,8 @@ public class ChatEndpointTest {
     // an Optional instance wrapping no object, which kind of gives an
     // indication to the onOpen method that the user "mockUser" is not
     // present in the system.
-    when(userService.findMemberByName(anyString())).thenReturn(Optional.empty());
+    // when(userService.findMemberByName("mockUser")).thenReturn(Optional.empty());
+//    when(userService.findMemberByName("mockUser")).thenReturn(Optional.empty());
 
 
     RemoteEndpoint.Basic remoteEndpoint = mock(RemoteEndpoint.Basic.class);
@@ -100,7 +109,8 @@ public class ChatEndpointTest {
   @Test
   public void testConnectedMessageWhenUserIsPresent() throws IOException, EncodeException {
     final String userName = "mockUser";
-    final User mockUser = new User(userName);
+    final User mockUser = new User(userName, userService);
+    final User anotherUser = new User(userName.substring(1), userService);
     // Create an instance of argument captor. As the name goes, useful to capture arguments passed
     // to our mock object.
     ArgumentCaptor<Message> argumentCaptor = ArgumentCaptor.forClass(Message.class);
@@ -110,7 +120,7 @@ public class ChatEndpointTest {
     // indication to the onOpen method that the user "mockUser" is not
     // present in the system.
 
-    when(userService.findMemberByName(anyString())).thenReturn(Optional.of(mockUser));
+    // when(userService.findMemberByName(anyString())).thenReturn(Optional.of(mockUser));
 
     RemoteEndpoint.Basic remoteEndpoint = mock(RemoteEndpoint.Basic.class);
 
@@ -128,9 +138,9 @@ public class ChatEndpointTest {
     assertEquals("User mockUser could not be found", message.getContent());
     assertEquals("Not set", message.getFrom());
 
-    MemberServiceImpl.getInstance().addUser(mockUser);
+    userService.addUser(anotherUser);
     chatEndpoint.onOpen(session, userName);
-    mockUser.connectTo(mockUser);
+    mockUser.connectTo(anotherUser);
     Message message1 = new Message();
     message1.setFrom(userName);
     message1.setTo(userName);

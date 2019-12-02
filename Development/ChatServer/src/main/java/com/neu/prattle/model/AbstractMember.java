@@ -1,18 +1,32 @@
 package com.neu.prattle.model;
 
-import java.util.UUID;
+import com.neu.prattle.service.MemberService;
+import com.neu.prattle.service.MemberServiceImpl;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 /**
  * An abstract class to encapsulate common functionality of users and groups.
  */
+@MappedSuperclass
 public abstract class AbstractMember implements IMember {
 
-  protected String name;
-  private String id;
+  @GeneratedValue(strategy= GenerationType.AUTO)
+  private int id;
 
-  AbstractMember() {
+  @Id
+  protected String name;
+
+  @Transient
+  protected MemberService ms;
+
+  public AbstractMember() {
+    this.ms = MemberServiceImpl.getInstance();
     this.name = null;
-    this.id = UUID.randomUUID().toString();
   }
 
   @Override
@@ -26,7 +40,7 @@ public abstract class AbstractMember implements IMember {
   }
 
   @Override
-  public String getId() {
+  public int getId() {
     return id;
   }
 
