@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
@@ -28,7 +29,9 @@ import javax.persistence.Transient;
 @Entity
 public class Group extends AbstractMember implements IGroup {
 
+  @ElementCollection
   private List<String> users;
+  @ElementCollection
   private List<String> admins;
   @Transient
   private Set<IMember> userMember;

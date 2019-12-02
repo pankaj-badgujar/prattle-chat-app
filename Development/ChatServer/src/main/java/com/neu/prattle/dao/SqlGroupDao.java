@@ -21,15 +21,13 @@ import javax.inject.Inject;
 public class SqlGroupDao implements GroupDao{
 
   private static SqlGroupDao groupDao;
-
-  @Inject
   private Session session;
 
   /**
    * A private constructor to initialize all fields related to establishing data base connection.
    */
   private SqlGroupDao() {
-    Configuration configuration = new Configuration().configure().addAnnotatedClass(User.class);
+    Configuration configuration = new Configuration().configure().addAnnotatedClass(Group.class);
     SessionFactory sf = configuration.buildSessionFactory();
     this.session = sf.openSession();
   }
