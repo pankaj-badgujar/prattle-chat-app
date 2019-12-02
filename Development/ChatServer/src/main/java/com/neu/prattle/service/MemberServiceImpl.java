@@ -1,6 +1,8 @@
 package com.neu.prattle.service;
 
 import com.neu.prattle.dao.GroupDao;
+import com.neu.prattle.dao.SqlGroupDao;
+import com.neu.prattle.dao.SqlUserDao;
 import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
@@ -37,6 +39,8 @@ public class MemberServiceImpl implements MemberService {
 
 
   private MemberServiceImpl() {
+    userDao = SqlUserDao.getInstance();
+    groupDao = SqlGroupDao.getInstance();
   }
 
   static {

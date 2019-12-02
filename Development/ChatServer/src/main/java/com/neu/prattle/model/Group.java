@@ -15,6 +15,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
 /**
  * A class to represent a group of users. Each Group consists of a list of all of it's users also,
  * the group contains another list that denotes the admin(s) of this group.
@@ -23,11 +26,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Devansh Gandhi
  * @version 2.0 dated 2019-11-26
  */
+@Entity
 public class Group extends AbstractMember implements IGroup {
 
   private List<String> users;
   private List<String> admins;
+  @Transient
   private Set<IMember> userMember;
+  @Transient
   private Set<IMember> adminsMember;
 
   @Override

@@ -21,6 +21,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -33,7 +34,11 @@ import javax.ws.rs.core.Response;
 @Path("/")
 public class MemberController {
 
-  private MemberService accountService = MemberServiceImpl.getInstance();
+  private MemberService accountService;
+
+  public MemberController() {
+    accountService = MemberServiceImpl.getInstance();
+  }
 
   public MemberController(MemberService accountService) {
     this.accountService = accountService;
@@ -123,10 +128,10 @@ public class MemberController {
    * @return -> Json object with all the IMember in th group.
    */
   @GET
-  @Path("members")
+  @Path("members/{name}")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response findAllMembers(String username) {
-    if(!accountService.findMemberByName(username).isPresent()){
+  public Response findAllMembers(@PathParam("name") String username) {
+    if (!accountService.findMemberByName(username).isPresent()) {
       return Response.status(404).entity("User with name " + username + " does not exist").build();
     }
     Gson gson = new Gson();

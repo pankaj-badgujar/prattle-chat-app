@@ -22,10 +22,6 @@ public class SqlGroupDao implements GroupDao{
   @Inject
   private Session session;
 
-  static {
-    groupDao = new SqlGroupDao();
-  }
-
   /**
    * A private constructor to initialize all fields related to establishing data base connection.
    */
@@ -44,6 +40,7 @@ public class SqlGroupDao implements GroupDao{
    * @return Singleton instance created by sql group dao.
    */
   public static SqlGroupDao getInstance() {
+    groupDao = groupDao == null ? (new SqlGroupDao()) : groupDao;
     return groupDao;
   }
 

@@ -19,10 +19,6 @@ public class SqlUserDao implements UserDao {
     this.session = session;
   }
 
-  static {
-    userDao = new SqlUserDao();
-  }
-
   private SqlUserDao() {
     Configuration configuration = new Configuration().configure().addAnnotatedClass(User.class);
     SessionFactory sf = configuration.buildSessionFactory();
@@ -30,6 +26,7 @@ public class SqlUserDao implements UserDao {
   }
 
   public static UserDao getInstance() {
+    userDao = userDao == null ? (new SqlUserDao()) : userDao;
     return userDao;
   }
 
