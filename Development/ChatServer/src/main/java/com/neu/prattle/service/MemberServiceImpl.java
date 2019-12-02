@@ -6,6 +6,7 @@ import com.neu.prattle.dao.SqlUserDao;
 import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
+import com.neu.prattle.model.IGroup;
 import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.IUser;
 import com.neu.prattle.model.User;
@@ -104,5 +105,20 @@ public class MemberServiceImpl implements MemberService {
     member.ifPresent(allMembers::remove);
     member.ifPresent(iMember -> allMembers.addAll(((IUser) iMember).getGroupsForUser()));
     return allMembers;
+  }
+
+  @Override
+  public boolean deleteGroup(String groupName, String adminName) {
+    Optional<IMember> groupObject = groupDao.findGroup(groupName);
+    if(groupObject.isPresent()){
+      //Ask harshil to change the return type to IGroup
+      IGroup group = (IGroup) groupObject.get();
+      if(group.getAdmins().contains(adminName)) {
+        return groupDao.removeGroup(groupName);
+      }
+      return false;
+    } else {
+      return false;
+    }
   }
 }

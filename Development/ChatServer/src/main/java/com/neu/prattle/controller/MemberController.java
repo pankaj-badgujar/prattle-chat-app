@@ -2,8 +2,12 @@ package com.neu.prattle.controller;
 
 import com.google.gson.Gson;
 
+import com.neu.prattle.exceptions.InvalidAdminException;
+import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
+import com.neu.prattle.model.GroupData;
+import com.neu.prattle.model.IGroup;
 import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.IMemberDTO;
 import com.neu.prattle.model.IUser;
@@ -12,12 +16,14 @@ import com.neu.prattle.model.UserConnector;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -121,11 +127,64 @@ public class MemberController {
   }
 
   /**
+   * This method can be used to add a member to the group.
+   *
+   * @param data -> Key value pairs for group name and member name.
+   * @return -> Response with a status 200 if the group was deleted successfully.
+   */
+  @POST
+  @Path("members/group/{adminName}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response addGroupMember(@PathParam("adminName") String adminName, GroupData data) {
+    String groupName = data.getGroupName();
+    List<String> memberName = data.getMembers();
+    Optional<IMember> groupEntity = accountService.findMemberByName(groupName);
+    if (groupEntity.isPresent()) {
+      IGroup group = (IGroup) groupEntity.get();
+      try {
+        memberName.forEach(member -> group.addUser(adminName, member));
+      } catch (InvalidAdminException e) {
+        return Response.status(401).build();
+      } catch (NoSuchUserPresentException e) {
+        return Response.status(400).build();
+      }
+    }
+    return Response.status(400).build();
+  }
+
+  /**
+   * This method can be used to make a member admin to the group.
+   *
+   * @param groupName  -> The name of the group from which the admin needs to be removed.
+   * @param memberName -> All the admins that need to be removed.
+   * @param adminName  -> Name of the user making the dlete request.
+   * @return -> Response with a status 200 if the group was deleted successfully.
+   */
+  @POST
+  @Path("members/{groupName}/{adminName}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response addGroupAdmin(@PathParam("adminName") String adminName, @PathParam("groupName")
+          String groupName, List<String> memberName) {
+    Optional<IMember> groupEntity = accountService.findMemberByName(groupName);
+    if (groupEntity.isPresent()) {
+      IGroup group = (IGroup) groupEntity.get();
+      try {
+        memberName.forEach(member -> group.makeAdmin(adminName, member));
+      } catch (InvalidAdminException e) {
+        return Response.status(401).build();
+      } catch (NoSuchUserPresentException e) {
+        return Response.status(400).build();
+      }
+    }
+    return Response.status(400).build();
+  }
+
+  /**
    * Get all the members for the username passed as parameter to this endpoint.
    *
    * @param username -> Username of the User for which we need to fetch all the members of the
    *                 group
-   * @return -> Json object with all the IMember in th group.
+   * @return -> Respose with body as all the IMember in th group.
    */
   @GET
   @Path("members/{name}")
@@ -138,5 +197,48 @@ public class MemberController {
     Set<IMember> memberSet = accountService.findAllMembers(username);
     Set<IMemberDTO> dto = memberSet.stream().map(IMember::getDTO).collect(Collectors.toSet());
     return Response.ok().entity(gson.toJson(dto)).build();
+  }
+
+
+  /**
+   * This method can be used to delete a member from the group.
+   *
+   * @param groupName -> The name of the group that needs to be deleted.
+   * @param adminName -> Name of the user making the dlete request.
+   * @return -> Response with a status 200 if the group was deleted successfully.
+   */
+  @DELETE
+  @Path("members/group/{adminName}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response deleteGroup(@PathParam("adminName") String adminName, String groupName) {
+    return accountService.deleteGroup(groupName, adminName) ? Response.ok().build() :
+            Response.status(401).build();
+  }
+
+  /**
+   * This method can be used to a member from the group.
+   *
+   * @param groupName  -> The name of the group from which the admin needs to be removed.
+   * @param memberName -> All the admins that need to be removed.
+   * @param adminName  -> Name of the user making the dlete request.
+   * @return -> Response with a status 200 if the group was deleted successfully.
+   */
+  @DELETE
+  @Path("members/{groupName}/{adminName}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response removeAdminGroup(@PathParam("adminName") String adminName, @PathParam("groupName")
+          String groupName, List<String> memberName) {
+    Optional<IMember> groupEntity = accountService.findMemberByName(groupName);
+    if (groupEntity.isPresent()) {
+      IGroup group = (IGroup) groupEntity.get();
+      try {
+        memberName.forEach(member -> group.removeAdmin(adminName, member));
+      } catch (InvalidAdminException e) {
+        return Response.status(401).build();
+      } catch (NoSuchUserPresentException e) {
+        return Response.status(400).build();
+      }
+    }
+    return Response.status(400).build();
   }
 }

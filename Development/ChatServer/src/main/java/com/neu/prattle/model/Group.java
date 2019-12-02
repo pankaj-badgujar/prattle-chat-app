@@ -65,8 +65,8 @@ public class Group extends AbstractMember implements IGroup {
   }
 
   /**
-  * A private helper method to assign all fields from constructors
-  */
+   * A private helper method to assign all fields from constructors
+   */
   private void initializeFields(String name, List<String> users, List<String> admins) {
     this.setName(name);
     this.users = new ArrayList<>(users);
@@ -143,8 +143,16 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.users.remove(userName);
     this.admins.remove(userName);
-    this.ms.findMemberByName(userName).ifPresent(member -> this.userMember.remove(member));
-    this.ms.findMemberByName(userName).ifPresent(member -> this.adminsMember.remove(member));
+    this.ms.findMemberByName(userName).ifPresentOrElse(member -> this.userMember.remove(member),
+            () -> {
+              throw new NoSuchUserPresentException("User with name "
+                      + userName + " does not exist.");
+            });
+    this.ms.findMemberByName(userName).ifPresentOrElse(member -> this.adminsMember.remove(member),
+            () -> {
+              throw new NoSuchUserPresentException("User with name "
+                      + userName + " does not exist.");
+            });
   }
 
   @Override
@@ -152,7 +160,11 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateUser(adminName);
     this.admins.add(adminName);
-    this.ms.findMemberByName(adminName).ifPresent(member -> this.adminsMember.add(member));
+    this.ms.findMemberByName(adminName).ifPresentOrElse(member -> this.adminsMember.add(member),
+            () -> {
+              throw new NoSuchUserPresentException("User with name "
+                      + adminName + " does not exist.");
+            });
   }
 
   @Override
@@ -160,7 +172,12 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateAdmin(adminToBeRemoved);
     this.admins.remove(adminToBeRemoved);
-    this.ms.findMemberByName(adminToBeRemoved).ifPresent(member -> this.adminsMember.remove(member));
+    this.ms.findMemberByName(adminToBeRemoved).ifPresentOrElse(member ->
+            this.adminsMember.remove(member), () -> {
+      throw new NoSuchUserPresentException("User " +
+              "with name "
+              + adminToBeRemoved + " does not exist.");
+    });
   }
 
   @Override

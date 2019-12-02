@@ -26,4 +26,12 @@ public interface GroupDao {
    * @return Optional object of the group found from the database.
    */
   Optional<IMember> findGroup(String name);
+
+  /**
+   * Method that can be used to delete the group from the datatbase.
+   *
+   * @param name Name of the group.
+   * @return true if the group was deleted false otherwise.
+   */
+  boolean removeGroup(String name);
 }

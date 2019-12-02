@@ -59,4 +59,9 @@ public class SqlGroupDao implements GroupDao{
   public Optional<IMember> findGroup(String name) {
     return Optional.ofNullable(session.get(Group.class, name));
   }
+
+  @Override
+  public boolean removeGroup(String name) {
+    return false;
+  }
 }
