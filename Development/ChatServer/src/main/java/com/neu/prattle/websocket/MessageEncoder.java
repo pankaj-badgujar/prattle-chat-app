@@ -4,7 +4,6 @@ import com.neu.prattle.model.Message;
 
 import com.neu.prattle.utils.PrattleLogger;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
