@@ -37,7 +37,6 @@ public class Group extends AbstractMember implements IGroup {
   private List<String> users;
   @ElementCollection
   private List<String> admins;
-  private MemberService ms;
 
   @Transient
   private Set<IMember> userMember;
