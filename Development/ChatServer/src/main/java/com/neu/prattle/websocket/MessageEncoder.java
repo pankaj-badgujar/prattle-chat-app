@@ -2,6 +2,8 @@ package com.neu.prattle.websocket;
 
 import com.neu.prattle.model.Message;
 
+import com.neu.prattle.utils.PrattleLogger;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -25,11 +27,6 @@ public class MessageEncoder implements Encoder.Text<Message> {
   private static ObjectMapper objectMapper = new ObjectMapper();
 
   /**
-   * The logger.
-   */
-  private Logger logger = Logger.getLogger(MessageEncoder.class);
-
-  /**
    * Encode.
    *
    * Constucts a JSON structure from a Message object, in effect serializing the Message by
@@ -44,7 +41,7 @@ public class MessageEncoder implements Encoder.Text<Message> {
     try {
       return objectMapper.writeValueAsString(message);
     } catch (IOException e) {
-      logger.warn("Error in encoding: "+e.getMessage());
+      PrattleLogger.log("Error in encoding: "+e.getMessage(), Level.WARN);
       return "{}";
     }
   }

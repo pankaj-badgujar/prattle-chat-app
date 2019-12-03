@@ -11,11 +11,13 @@ import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.IUser;
 import com.neu.prattle.model.User;
 
+import com.neu.prattle.utils.PrattleLogger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -30,7 +32,6 @@ public class MemberServiceImpl implements MemberService {
   private final List<IMember> users = new ArrayList<>();
   private final List<IMember> groups = new ArrayList<>();
   private static MemberService memberService;
-  private final static Logger logger = Logger.getLogger(MemberServiceImpl.class);
 
   private UserDao userDao;
   private GroupDao groupDao;
@@ -52,19 +53,19 @@ public class MemberServiceImpl implements MemberService {
               group.getName()));
     }
     this.groups.add(group);
-    logger.info("Group with the following name created: "+ group.getName());
+    PrattleLogger.log("Group with the following name created: "+ group.getName(), Level.INFO);
     groupDao.createGroup(group);
   }
 
   @Override
   public synchronized User addUser(User user) {
     if (this.users.contains(user)) {
-      logger.error("User with the name "+user.getName()+" already exists.");
+      PrattleLogger.log("User with the name "+user.getName()+" already exists.", Level.INFO);
       throw new UserAlreadyPresentException(String.format("User already present with name: %s",
               user.getName()));
     }
     this.users.add(user);
-    logger.info("User with the following username created: "+ user.getName());
+    PrattleLogger.log("User with the following username created: "+ user.getName(), Level.INFO);
     return userDao.createUser(user);
   }
 

@@ -7,10 +7,12 @@ package com.neu.prattle.websocket;
  * @version dated 2017-03-05
  */
 
+import com.neu.prattle.utils.PrattleLogger;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import com.neu.prattle.model.Message;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -23,9 +25,6 @@ public class MessageDecoder implements Decoder.Text<Message> {
 
     /** @see org.codehaus.jackson.map.ObjectMapper */
     private static ObjectMapper objectMapper = new ObjectMapper();
-    
-    /** The logger. */
-    private Logger logger = Logger.getLogger(MessageDecoder.class);
 
     /**
      * Decode.
@@ -41,7 +40,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
         try {
             message = objectMapper.readValue(s, Message.class);
         } catch (IOException e) {
-            logger.warn("Error in decoding: "+e.getMessage());
+            PrattleLogger.log("Error in decoding: "+e.getMessage(), Level.WARN);
         }
         return message;
     }

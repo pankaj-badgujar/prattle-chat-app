@@ -4,7 +4,7 @@
    "DNS": "ec2-3-82-210-118.compute-1.amazonaws.com",
     "user":"ubuntu",
     "directory":"/home/ubuntu",
-    "JARNAME": "java-websocket-0.0.1-SNAPSHOT",
+    "JARNAME": "java-websocket-0.0.1-SNAPSHOT.war",
     "PEM": "Prattle.pem"
  }
 ]

@@ -3,7 +3,8 @@ package com.neu.prattle.model;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
 
-import org.apache.log4j.Logger;
+import com.neu.prattle.utils.PrattleLogger;
+import org.apache.log4j.Level;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
@@ -30,9 +31,6 @@ public class User extends AbstractMember implements IUser {
 
   @Transient
   private List<IMember> groups;
-
-  private final static Logger logger = Logger.getLogger(User.class);
-
   private String password;
 
   @Override
@@ -52,7 +50,7 @@ public class User extends AbstractMember implements IUser {
     this.name = name;
     this.connectedTo = null;
     groups = new ArrayList<>();
-    logger.info("User created with the following username: " + name);
+    PrattleLogger.log("User created with the following username: " + name, Level.INFO);
     this.password = password;
   }
 
@@ -73,8 +71,7 @@ public class User extends AbstractMember implements IUser {
     this.name = name;
     this.connectedTo = null;
     groups = new ArrayList<>();
-
-    logger.info("User created with the following username: " + name);
+    PrattleLogger.log("User created with the following username: " + name, Level.INFO);
 
     password = "";
 
@@ -100,8 +97,8 @@ public class User extends AbstractMember implements IUser {
   @Override
   public void connectTo(IMember otherMember) {
     if (!ms.findMemberByName(otherMember.getName()).isPresent()) {
-      logger.error(this.getName() + " tried to connect to the user: " + otherMember.getName()
-      + ", that doesn't exist.");
+      PrattleLogger.log(this.getName() + " tried to connect to the user: " + otherMember.getName()
+          + ", that doesn't exist.", Level.INFO);
       throw new NoSuchUserPresentException(otherMember.getName());
     }
     this.connectedTo = otherMember;

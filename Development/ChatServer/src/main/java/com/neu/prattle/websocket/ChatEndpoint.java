@@ -13,6 +13,7 @@ import com.neu.prattle.model.Message;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
+import com.neu.prattle.utils.PrattleLogger;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
@@ -37,8 +39,6 @@ import javax.websocket.server.ServerEndpoint;
  */
 @ServerEndpoint(value = "/chat/{username}", decoders = MessageDecoder.class, encoders = MessageEncoder.class)
 public class ChatEndpoint {
-
-  private final static Logger logger = Logger.getLogger(ChatEndpoint.class);
 
   /**
    * The account service.
@@ -89,7 +89,7 @@ public class ChatEndpoint {
       Message error = Message.messageBuilder()
               .setMessageContent(String.format("User %s could not be found", username))
               .build();
-      logger.warn(username + " doesn't exist.");
+      PrattleLogger.log(username + " doesn't exist.", Level.INFO);
       session.getBasicRemote().sendObject(error);
       return;
     }
@@ -120,7 +120,6 @@ public class ChatEndpoint {
    */
   @OnMessage
   public void onMessage(Session session, Message message) {
-
     broadcastToTheConnectUser(message.getFrom(), message);
   }
 
@@ -140,7 +139,7 @@ public class ChatEndpoint {
   /**
    * On error.
    *
-   * Handles situations when an error occurs. Not implemented.
+   * Handles situations when an error occurs. Logs the error in file as well as informs on email.
    *
    * @param session   the session with the problem
    * @param throwable the action to be taken.
@@ -148,8 +147,9 @@ public class ChatEndpoint {
   @OnError
   public void onError(Session session, Throwable throwable) {
     // Do error handling here
-    logger.warn("Socket timeout: " + session.getId());
-    logger.error("WebSocket error: " + throwable);
+    PrattleLogger.log("Socket timeout: " + session.getId(), Level.WARN);
+    PrattleLogger.log("WebSocket error: " + throwable, Level.WARN);
+    PrattleLogger.log("WebSocket error: " + throwable, Level.ERROR);
   }
 
   private void broadcastToTheConnectUser(String userFrom, Message message) {
@@ -167,17 +167,17 @@ public class ChatEndpoint {
     }
   }
 
-  private void sendTo(String seesionID, Message message) {
+  private void sendTo(String sessionID, Message message) {
     chatEndpoints.forEach(endpoint -> {
       synchronized (endpoint) {
         try {
-          if (endpoint.session.getId().equals(seesionID)) {
+          if (endpoint.session.getId().equals(sessionID)) {
             endpoint.session.getBasicRemote()
                     .sendObject(message);
           }
         } catch (EncodeException | NullPointerException | IOException e) {
           // Add a logger here to handle exception
-          logger.error(e.getMessage());
+          PrattleLogger.log(e.getMessage(), Level.WARN);
         }
       }
     });

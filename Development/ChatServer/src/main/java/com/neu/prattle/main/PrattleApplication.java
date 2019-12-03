@@ -2,10 +2,12 @@ package com.neu.prattle.main;
 
 import com.neu.prattle.controller.MemberController;
 
+import com.neu.prattle.utils.PrattleLogger;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.core.Application;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /***
@@ -17,11 +19,10 @@ import org.apache.log4j.Logger;
  */
 public class PrattleApplication extends Application {
   private Set<Class<?>> resourceClasses = new HashSet<>();
-  private final static Logger logger = Logger.getLogger(PrattleApplication.class);
 
   @Override
   public Set<Class<?>> getClasses() {
-    logger.error("Application started.");
+    PrattleLogger.log("Application started.", Level.ERROR);
     resourceClasses.add(MemberController.class);
     return resourceClasses;
   }
