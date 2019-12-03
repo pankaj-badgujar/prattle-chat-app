@@ -61,7 +61,26 @@ pipeline {
   } //steps
 } //SONAR
 }
-} //stage 
+} //stage
+
+stage('Master Branch Tasks') {
+  when {
+   branch 'master'
+ }
+ agent any
+ steps {
+   echo "Building ChatServer"
+   sh 'mvn -f Development/pom.xml package -Dmaven.test.skip=true'
+
+   script {
+    def json = readJSON file:'config.json'
+    sh 'cd ${WORKSPACE}'
+    sh "chmod 400 ${json.server[0].PEM}"
+    sh "scp -oStrictHostKeyChecking=no -i ${json.server[0].PEM} Development/target/${json.server[0].JARNAME} ${json.server[0].user}@${json.server[0].DNS}:${json.server[0].directory}"
+    sh "ssh -oStrictHostKeyChecking=no -i ${json.server[0].PEM} ${json.server[0].user}@${json.server[0].DNS}  bash ${json.server[0].directory}/deploy.sh"
+                 } //script
+               }
+             }
 } // STAGES
 
  post {      
