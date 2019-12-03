@@ -66,6 +66,7 @@ public class ChatEndpoint {
 
   public ChatEndpoint(MemberService memberService){
     accountService = memberService;
+
   }
   /**
    * On open.
@@ -149,7 +150,6 @@ public class ChatEndpoint {
     // Do error handling here
     PrattleLogger.log("Socket timeout: " + session.getId(), Level.WARN);
     PrattleLogger.log("WebSocket error: " + throwable, Level.WARN);
-    PrattleLogger.log("WebSocket error: " + throwable, Level.ERROR);
   }
 
   private void broadcastToTheConnectUser(String userFrom, Message message) {

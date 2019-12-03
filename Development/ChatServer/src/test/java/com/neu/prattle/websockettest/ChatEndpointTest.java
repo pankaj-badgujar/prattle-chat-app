@@ -8,8 +8,10 @@ import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.model.Message;
 import com.neu.prattle.model.User;
 import com.neu.prattle.service.MemberServiceImpl;
+import com.neu.prattle.utils.PrattleLogger;
 import com.neu.prattle.websocket.ChatEndpoint;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,7 @@ import javax.websocket.Session;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -139,5 +142,6 @@ public class ChatEndpointTest {
     message1.setTo(userName);
     chatEndpoint.onMessage(session, message1);
     chatEndpoint.onClose(session);
+    chatEndpoint.onError(session, new IllegalStateException());
   }
 }
