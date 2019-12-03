@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 public class UserDTO implements IMemberDTO {
 
+  private final int id;
   private final IMember connectedTo;
   private final List<String> groups;
   private final String username;
@@ -15,10 +16,11 @@ public class UserDTO implements IMemberDTO {
     return this.username;
   }
 
-  public UserDTO(String name, IMember connectedTo, List<IMember> groups) {
+  public UserDTO(int id, String name, IMember connectedTo, List<IMember> groups) {
     this.connectedTo = connectedTo;
     this.username = name;
     this.groups = groups.stream().map(IMember::getName).collect(Collectors.toList());
+    this.id = id;
   }
 
   public IMember getConnectedTo() {
@@ -27,5 +29,9 @@ public class UserDTO implements IMemberDTO {
 
   public List<String> getGroups() {
     return new ArrayList<>(groups);
+  }
+
+  public int getId() {
+    return id;
   }
 }

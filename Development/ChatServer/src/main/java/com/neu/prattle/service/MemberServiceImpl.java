@@ -44,13 +44,9 @@ public class MemberServiceImpl implements MemberService {
     groupDao = SqlGroupDao.getInstance();
   }
 
-  static {
-    memberService = new MemberServiceImpl();
-  }
-
   @Override
   public synchronized void addGroup(Group group) {
-    if(this.groups.contains(group)){
+    if (this.groups.contains(group)) {
       throw new UserAlreadyPresentException(String.format("Group already present with name: %s",
               group.getName()));
     }
@@ -62,7 +58,7 @@ public class MemberServiceImpl implements MemberService {
   public synchronized User addUser(User user) {
     if (this.users.contains(user)) {
       throw new UserAlreadyPresentException(String.format("User already present with name: %s",
-          user.getName()));
+              user.getName()));
     }
     this.users.add(user);
     userDao.createUser(user);
@@ -76,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public synchronized Optional<IMember> findMemberByName(String memberName) {
     Optional<IMember> member = userDao.getUser(memberName);
-    if(member.isPresent()) {
+    if (member.isPresent()) {
       return member;
     }
     return groupDao.findGroup(memberName);
@@ -88,6 +84,9 @@ public class MemberServiceImpl implements MemberService {
    * @return this
    */
   public static MemberService getInstance() {
+    if (memberService == null) {
+      memberService = new MemberServiceImpl();
+    }
     return memberService;
   }
 
@@ -110,10 +109,10 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public boolean deleteGroup(String groupName, String adminName) {
     Optional<IMember> groupObject = groupDao.findGroup(groupName);
-    if(groupObject.isPresent()){
+    if (groupObject.isPresent()) {
       //Ask harshil to change the return type to IGroup
       IGroup group = (IGroup) groupObject.get();
-      if(group.getAdmins().contains(adminName)) {
+      if (group.getAdmins().contains(adminName)) {
         return groupDao.removeGroup(groupName);
       }
       return false;

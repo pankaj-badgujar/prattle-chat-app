@@ -34,7 +34,7 @@ public class User extends AbstractMember implements IUser {
 
   @Override
   public IMemberDTO getDTO() {
-    return new UserDTO(this.name, this.connectedTo, this.groups);
+    return new UserDTO(this.id,this.name, this.connectedTo, this.groups);
   }
 
   /**
@@ -52,7 +52,7 @@ public class User extends AbstractMember implements IUser {
   }
 
   public User(String name, String password, MemberService ms) {
-    this.ms = ms;
+    super(ms);
     this.name = name;
     this.password = password;
     groups = new ArrayList<>();
@@ -76,9 +76,9 @@ public class User extends AbstractMember implements IUser {
   }
 
   public User(String name, MemberService ms) {
+    super(ms);
     this.name = name;
     this.groups = new ArrayList<>();
-    this.ms = ms;
   }
 
   @Override

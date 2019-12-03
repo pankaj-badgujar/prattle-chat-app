@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -39,7 +40,7 @@ public class MemberControllerTest {
 
   @Test
   public void testCreateNewUser() {
-    Response response = controller.createUserAccount(new User("mock"));
+    Response response = controller.createUserAccount(new User("mock",Mockito.mock(MemberServiceImpl.class)));
     assertEquals(200, response.getStatus());
   }
 
@@ -67,7 +68,8 @@ public class MemberControllerTest {
   @Test
   public void testCreateNewGroup() {
     doNothing().when(impl).addGroup(any(Group.class));
-    Response response = controller.createGroup(new Group());
+    Response response = controller.createGroup(new Group("FSE",new ArrayList<>(),new ArrayList<>()
+            ,Mockito.mock(MemberServiceImpl.class)));
     assertEquals(200, response.getStatus());
   }
 

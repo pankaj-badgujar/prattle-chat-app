@@ -2,6 +2,8 @@ package com.neu.prattle.websockettest;
 
 
 import com.neu.prattle.dao.GroupDao;
+import com.neu.prattle.dao.SqlGroupDao;
+import com.neu.prattle.dao.SqlUserDao;
 import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.model.Message;
 import com.neu.prattle.model.User;
@@ -12,12 +14,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.websocket.EncodeException;
 import javax.websocket.RemoteEndpoint;
@@ -37,25 +38,21 @@ public class ChatEndpointTest {
 
   // Mock instance of Session
   private Session session;
-
-  @Mock
-  private UserDao userDao;
-
-  @Mock
-  private GroupDao groupDao;
-
-  @InjectMocks
   private MemberServiceImpl userService;
-
+  final String userName = "mockUser";
+  private User mockUser;
+  private User anotherUser;
   /***
    * Called up each test before invocation.
    */
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    when(userDao.createUser(any(User.class))).thenReturn(new User());
-    chatEndpoint = new ChatEndpoint();
+    userService = Mockito.mock(MemberServiceImpl.class);
+    chatEndpoint = new ChatEndpoint(userService);
+    mockUser = new User(userName, userService);
+    anotherUser = new User(userName.substring(1), userService);
     session = mock(Session.class);
+    when(userService.findMemberByName(userName)).thenReturn(Optional.of(mockUser));
   }
 
   /***
@@ -66,7 +63,6 @@ public class ChatEndpointTest {
   @Test
   public void testErrorMessageWhenUserIsNotPresent() throws IOException, EncodeException {
 
-    final String userName = "mockUser";
     // Create an instance of argument captor. As the name goes, useful to capture arguments passed
     // to our mock object.
     ArgumentCaptor<Message> argumentCaptor = ArgumentCaptor.forClass(Message.class);
@@ -92,7 +88,7 @@ public class ChatEndpointTest {
 
     String test = "test";
 
-    assertEquals("test",test);
+    assertEquals("test", test);
 
     // Asserts the returned messaged.
     //assertEquals(String.format("User %s could not be found", userName), message.getContent());
@@ -108,11 +104,9 @@ public class ChatEndpointTest {
    */
   @Test
   public void testConnectedMessageWhenUserIsPresent() throws IOException, EncodeException {
-    final String userName = "mockUser";
-    final User mockUser = new User(userName, userService);
-    final User anotherUser = new User(userName.substring(1), userService);
     // Create an instance of argument captor. As the name goes, useful to capture arguments passed
     // to our mock object.
+    when(userService.findMemberByName(userName)).thenReturn(Optional.empty());
     ArgumentCaptor<Message> argumentCaptor = ArgumentCaptor.forClass(Message.class);
 
     // Mocks the behavior of userService. It tell the userService to return
@@ -129,7 +123,6 @@ public class ChatEndpointTest {
 
     when(session.getBasicRemote()).thenReturn(remoteEndpoint);
 
-    userService.addUser(mockUser);
     chatEndpoint.onOpen(session, userName);
 
     Message message = argumentCaptor.getAllValues().get(0);
@@ -137,8 +130,8 @@ public class ChatEndpointTest {
     // Asserts the returned messaged.
     assertEquals("User mockUser could not be found", message.getContent());
     assertEquals("Not set", message.getFrom());
-
-    userService.addUser(anotherUser);
+    when(userService.findMemberByName(userName)).thenReturn(Optional.of(mockUser));
+    when(userService.findMemberByName(anotherUser.getName())).thenReturn(Optional.of(anotherUser));
     chatEndpoint.onOpen(session, userName);
     mockUser.connectTo(anotherUser);
     Message message1 = new Message();

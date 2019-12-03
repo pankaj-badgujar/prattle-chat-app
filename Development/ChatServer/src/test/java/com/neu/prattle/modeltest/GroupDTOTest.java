@@ -11,10 +11,11 @@ import static org.junit.Assert.*;
 public class GroupDTOTest {
   @Test
   public void testInstantiation() {
-    GroupDTO dto = new GroupDTO("FSE", new LinkedList<>(), new LinkedList<>());
+    GroupDTO dto = new GroupDTO(1,"FSE", new LinkedList<>(), new LinkedList<>());
     assertEquals("FSE", dto.getUsername());
     assertEquals(new LinkedList<>(), dto.getAdmins());
     assertEquals(new LinkedList<>(), dto.getUsers());
+    assertEquals(1, dto.getId());
   }
 
 }

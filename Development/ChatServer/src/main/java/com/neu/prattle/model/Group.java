@@ -63,7 +63,7 @@ public class Group extends AbstractMember implements IGroup {
    * @param admins List of admins in the group that have privileges above normal users.
    */
   public Group(String name, List<String> users, List<String> admins, MemberService ms) {
-    this.ms = ms;
+    super(ms);
     this.initializeFields(name, users, admins);
   }
 
@@ -109,7 +109,7 @@ public class Group extends AbstractMember implements IGroup {
   }
 
   public Group(String name, Set<IMember> users, Set<IMember> admins, MemberService ms) {
-    this.ms = ms;
+    super(ms);
     this.assignGroupToUsers(name, users, admins);
   }
 
@@ -211,7 +211,7 @@ public class Group extends AbstractMember implements IGroup {
 
   @Override
   public IMemberDTO getDTO() {
-    return new GroupDTO(this.name, this.admins, this.users);
+    return new GroupDTO(this.id,this.name, this.admins, this.users);
   }
 
   @Override

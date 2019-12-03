@@ -40,7 +40,7 @@ public class ChatEndpoint {
   /**
    * The account service.
    */
-  private MemberService accountService = MemberServiceImpl.getInstance();
+  private MemberService accountService;
 
   /**
    * The session.
@@ -57,6 +57,13 @@ public class ChatEndpoint {
    */
   private static HashMap<String, String> users = new HashMap<>();
 
+  public ChatEndpoint(){
+    accountService = MemberServiceImpl.getInstance();
+  }
+
+  public ChatEndpoint(MemberService memberService){
+    accountService = memberService;
+  }
   /**
    * On open.
    *

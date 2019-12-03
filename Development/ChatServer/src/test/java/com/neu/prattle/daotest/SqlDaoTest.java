@@ -23,23 +23,15 @@ import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-public class SqlGroupDaoTest {
+public class SqlDaoTest {
 
   private Session session;
-
-  @Mock
-  private UserDao userDao;
-
-  @Mock
-  private GroupDao groupDao;
-
-  @InjectMocks
   private MemberServiceImpl memberService;
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
     session = Mockito.mock(Session.class);
+    memberService = Mockito.mock(MemberServiceImpl.class);
   }
 
   @Test
