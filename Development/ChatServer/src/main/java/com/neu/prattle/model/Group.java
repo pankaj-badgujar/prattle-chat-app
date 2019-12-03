@@ -38,7 +38,6 @@ public class Group extends AbstractMember implements IGroup {
   @ElementCollection
   private List<String> admins;
   private MemberService ms;
-  private final static Logger logger = Logger.getLogger(Group.class);
 
   @Transient
   private Set<IMember> userMember;
