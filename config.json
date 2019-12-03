@@ -1,10 +1,10 @@
 {
 "server":[
  {
-   "DNS": "YOUR-CLOUD-INSTANCE",
+   "DNS": "ec2-3-82-210-118.compute-1.amazonaws.com",
     "user":"ubuntu",
     "directory":"/home/ubuntu",
-    "JARNAME": "Prattle-0.0.1-SNAPSHOT.jar",
+    "JARNAME": "java-websocket-0.0.1-SNAPSHOT",
     "PEM": "Prattle.pem"
  }
 ]
