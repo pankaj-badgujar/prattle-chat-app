@@ -3,15 +3,21 @@ package com.neu.prattle.model;
 import com.neu.prattle.exceptions.InvalidAdminException;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
-import com.neu.prattle.service.MemberServiceImpl;
+
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * A class to represent a group of users. Each Group consists of a list of all of it's users also,
@@ -21,12 +27,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Devansh Gandhi
  * @version 2.0 dated 2019-11-26
  */
+@Entity
 public class Group extends AbstractMember implements IGroup {
+
+  @ElementCollection
   private List<String> users;
+  @ElementCollection
   private List<String> admins;
   private MemberService ms;
   private final static Logger logger = Logger.getLogger(Group.class);
+
+  @Transient
   private Set<IMember> userMember;
+  @Transient
   private Set<IMember> adminsMember;
 
   @Override
@@ -41,7 +54,27 @@ public class Group extends AbstractMember implements IGroup {
    * @param users  List of users currently present in the group.
    * @param admins List of admins in the group that have privileges above normal users.
    */
-  public Group(String name, List<String> users, List<String> admins) {
+  public Group(@JsonProperty("name") String name, @JsonProperty("users") List<String> users,
+               @JsonProperty("admins") List<String> admins) {
+    this.initializeFields(name, users, admins);
+  }
+
+  /**
+   * A parameterized constructor that initializes all fields as required.
+   *
+   * @param name   Name of the group.
+   * @param users  List of users currently present in the group.
+   * @param admins List of admins in the group that have privileges above normal users.
+   */
+  public Group(String name, List<String> users, List<String> admins, MemberService ms) {
+    super(ms);
+    this.initializeFields(name, users, admins);
+  }
+
+  /**
+   * A private helper method to assign all fields from constructors
+   */
+  private void initializeFields(String name, List<String> users, List<String> admins) {
     this.setName(name);
     this.users = new ArrayList<>(users);
     this.admins = new ArrayList<>(admins);
@@ -58,20 +91,28 @@ public class Group extends AbstractMember implements IGroup {
     this.adminsMember = getAllIMembers(admins);
   }
 
+  /**
+   * A parameterized constructor that initializes all fields as required.
+   *
+   * @param name   Name of the group.
+   * @param users  List of users currently present in the group.
+   * @param admins List of admins in the group that have privileges above normal users.
+   */
+  public Group(String name, Set<IMember> users, Set<IMember> admins) {
+    this.assignGroupToUsers(name, users, admins);
+  }
+
   @Override
   public void setGroupsForUser(IMember group) {
-    userMember.forEach(member -> {
-      member.setGroupsForUser(group);
-    });
+    userMember.forEach(member -> member.setGroupsForUser(group));
   }
 
   private Set<IMember> getAllIMembers(List<String> userNames) {
-    MemberService memberService = MemberServiceImpl.getInstance();
     Set<IMember> allConnectedMembers = new HashSet<>();
     userNames.forEach(member -> {
-      Optional<IMember> eachMember = memberService.findMemberByName(member);
+      Optional<IMember> eachMember = this.ms.findMemberByName(member);
       allConnectedMembers.add(eachMember.get());
-      eachMember.ifPresent(iMember->iMember.setGroupsForUser(this));
+      eachMember.ifPresent(iMember -> iMember.setGroupsForUser(this));
     });
     return allConnectedMembers;
   }
@@ -80,7 +121,21 @@ public class Group extends AbstractMember implements IGroup {
     logger.info("A Group created.");
   }
 
-  public Group(String name, Set<IMember> users, Set<IMember> admins) {
+  public Group(String name, Set<IMember> users, Set<IMember> admins, MemberService ms) {
+    super(ms);
+    this.assignGroupToUsers(name, users, admins);
+  }
+
+  private void validateIMembers(Set<IMember> members) {
+    members.forEach(member -> {
+      Optional<IMember> validateUser = this.ms.findMemberByName(member.getName());
+      if (!validateUser.isPresent()) {
+        throw new NoSuchUserPresentException(member.getName() + " is not a valid user.");
+      }
+    });
+  }
+
+  private void assignGroupToUsers(String name, Set<IMember> users, Set<IMember> admins) {
     this.validateIMembers(users);
     this.validateIMembers(admins);
     this.setName(name);
@@ -90,15 +145,6 @@ public class Group extends AbstractMember implements IGroup {
     this.admins = new ArrayList<>();
     users.forEach(user -> this.users.add(user.getName()));
     admins.forEach(user -> this.admins.add(user.getName()));
-  }
-
-  private void validateIMembers(Set<IMember> members) {
-    members.forEach(member -> {
-      Optional<IMember> validateUser = MemberServiceImpl.getInstance().findMemberByName(member.getName());
-      if (!validateUser.isPresent()) {
-        throw new NoSuchUserPresentException(member.getName() + " is not a valid user.");
-      }
-    });
   }
 
   @Override
@@ -115,10 +161,10 @@ public class Group extends AbstractMember implements IGroup {
     this.users.remove(userName);
     logger.info(admin+" removed "+userName+" from the group "+this.getName());
     this.admins.remove(userName);
-    MemberServiceImpl.getInstance().findMemberByName(userName).ifPresent(member ->
-            this.userMember.remove(member));
-    MemberServiceImpl.getInstance().findMemberByName(userName).ifPresent(member ->
-            this.adminsMember.remove(member));
+    Optional<IMember> memberEntity = this.ms.findMemberByName(userName);
+    validateMember(memberEntity, userName);
+    memberEntity.ifPresent(member -> this.userMember.remove(member));
+    memberEntity.ifPresent(member -> this.adminsMember.remove(member));
   }
 
   @Override
@@ -127,8 +173,15 @@ public class Group extends AbstractMember implements IGroup {
     this.validateUser(adminName);
     this.admins.add(adminName);
     logger.info(admin+" made "+ adminName+", an admin of the group "+this.getName());
-    MemberServiceImpl.getInstance().findMemberByName(adminName).ifPresent(member ->
-            this.adminsMember.add(member));
+    Optional<IMember> adminMember = this.ms.findMemberByName(adminName);
+    validateMember(adminMember, adminName);
+    adminMember.ifPresent(member -> this.adminsMember.add(member));
+  }
+
+  private void validateMember(Optional<IMember> member, String name) {
+    if (!member.isPresent()) {
+      throw new NoSuchUserPresentException(name);
+    }
   }
 
   @Override
@@ -137,8 +190,9 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(adminToBeRemoved);
     this.admins.remove(adminToBeRemoved);
     logger.info(admin+" cancelled admin rights for the admin, "+adminToBeRemoved);
-    MemberServiceImpl.getInstance().findMemberByName(adminToBeRemoved).ifPresent(member ->
-            this.adminsMember.remove(member));
+    Optional<IMember> adminMember = this.ms.findMemberByName(adminToBeRemoved);
+    validateMember(adminMember, adminToBeRemoved);
+    adminMember.ifPresent(member -> this.adminsMember.remove(member));
   }
 
   @Override
@@ -167,19 +221,35 @@ public class Group extends AbstractMember implements IGroup {
 
   private void validateUser(String user) {
     AtomicBoolean validate = new AtomicBoolean(false);
-    MemberServiceImpl.getInstance().findMemberByName(user).ifPresent(member ->
-            validate.set(true));
+    this.ms.findMemberByName(user).ifPresent(member -> validate.set(true));
     if (!validate.get()) {
       throw new NoSuchUserPresentException("User with name user does not exist");
     }
   }
 
   @Override
+  public IMemberDTO getDTO() {
+    return new GroupDTO(this.id, this.name, this.admins, this.users);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.getId());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Group) {
+      return ((Group) obj).getId() == (this.getId());
+    }
+    return false;
+  }
+
+  @Override
   public Set<String> getAllConnectedMembers() {
-    MemberService memberService = MemberServiceImpl.getInstance();
     Set<String> allConnectedMembers = new HashSet<>();
     users.forEach(member -> {
-      Optional<IMember> eachMember = memberService.findMemberByName(member);
+      Optional<IMember> eachMember = this.ms.findMemberByName(member);
       eachMember.ifPresent(memberInternal ->
               allConnectedMembers.addAll(memberInternal.getAllConnectedMembers()));
     });

@@ -43,7 +43,7 @@ public class ChatEndpoint {
   /**
    * The account service.
    */
-  private MemberService accountService = MemberServiceImpl.getInstance();
+  private MemberService accountService;
 
   /**
    * The session.
@@ -60,6 +60,13 @@ public class ChatEndpoint {
    */
   private static HashMap<String, String> users = new HashMap<>();
 
+  public ChatEndpoint(){
+    accountService = MemberServiceImpl.getInstance();
+  }
+
+  public ChatEndpoint(MemberService memberService){
+    accountService = memberService;
+  }
   /**
    * On open.
    *
@@ -114,8 +121,6 @@ public class ChatEndpoint {
   @OnMessage
   public void onMessage(Session session, Message message) {
 
-//    String userFrom = users.get(session.getId());
-//    message.setFrom(userFrom);
     broadcastToTheConnectUser(message.getFrom(), message);
   }
 
@@ -130,9 +135,6 @@ public class ChatEndpoint {
   @OnClose
   public void onClose(Session session) {
     chatEndpoints.remove(this);
-    Message message = new Message();
-//    message.setFrom(users.get(session.getId()));
-    message.setContent("Disconnected!");
   }
 
   /**
@@ -158,8 +160,6 @@ public class ChatEndpoint {
 
     Set<String> allConnectedMembers = toMember.isPresent() ?
             toMember.get().getAllConnectedMembers() : new HashSet<>();
-
-//    allConnectedMembers.add(userFrom);
 
     for (String connectedMember : allConnectedMembers) {
       String toUserSessionId = getSessionID(connectedMember);
