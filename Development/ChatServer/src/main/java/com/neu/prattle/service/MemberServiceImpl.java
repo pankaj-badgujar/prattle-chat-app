@@ -1,7 +1,12 @@
 package com.neu.prattle.service;
 
+import com.neu.prattle.dao.GroupDao;
+import com.neu.prattle.dao.SqlGroupDao;
+import com.neu.prattle.dao.SqlUserDao;
+import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
+import com.neu.prattle.model.IGroup;
 import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.IUser;
 import com.neu.prattle.model.User;
@@ -25,25 +30,37 @@ public class MemberServiceImpl implements MemberService {
   private final List<IMember> groups = new ArrayList<>();
   private static MemberService memberService;
 
+  private UserDao userDao;
+  private GroupDao groupDao;
+
+
   private MemberServiceImpl() {
+    userDao = SqlUserDao.getInstance();groupDao = SqlGroupDao.getInstance();
   }
 
-  static {
-    memberService = new MemberServiceImpl();
+  MemberServiceImpl(UserDao userDao, GroupDao groupDao) {
+    this.userDao = userDao;
+    this.groupDao = groupDao;
   }
 
   @Override
   public synchronized void addGroup(Group group) {
+    if (this.groups.contains(group)) {
+      throw new UserAlreadyPresentException(String.format("Group already present with name: %s",
+              group.getName()));
+    }
     this.groups.add(group);
+    groupDao.createGroup(group);
   }
 
   @Override
-  public synchronized void addUser(User user) {
+  public synchronized User addUser(User user) {
     if (this.users.contains(user)) {
       throw new UserAlreadyPresentException(String.format("User already present with name: %s",
-          user.getName()));
+              user.getName()));
     }
     this.users.add(user);
+    return userDao.createUser(user);
   }
 
   /**
@@ -52,10 +69,11 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   public synchronized Optional<IMember> findMemberByName(String memberName) {
-    List<IMember> members = new ArrayList<>();
-    members.addAll(users);
-    members.addAll(groups);
-    return members.stream().filter(member -> member.getName().equals(memberName)).findAny();
+    Optional<IMember> member = userDao.getUser(memberName);
+    if (member.isPresent()) {
+      return member;
+    }
+    return groupDao.findGroup(memberName);
   }
 
   /**
@@ -64,6 +82,7 @@ public class MemberServiceImpl implements MemberService {
    * @return this
    */
   public static MemberService getInstance() {
+    memberService = memberService == null ? new MemberServiceImpl() : memberService;
     return memberService;
   }
 
@@ -76,12 +95,22 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Set<IMember> findAllMembers(String username) {
-    Set<IMember> allMembers = new HashSet<>();
     Optional<IMember> member = findMemberByName(username);
-    allMembers.addAll(users);
+    Set<IMember> allMembers = new HashSet<>(users);
     member.ifPresent(allMembers::remove);
     member.ifPresent(iMember -> allMembers.addAll(((IUser) iMember).getGroupsForUser()));
     return allMembers;
   }
-}
 
+  @Override
+  public boolean deleteGroup(String groupName, String adminName) {
+    Optional<IMember> groupObject = groupDao.findGroup(groupName);
+    if (groupObject.isPresent()) {
+      IGroup group = (IGroup) groupObject.get();
+      if (group.getAdmins().contains(adminName)) {
+        return groupDao.removeGroup(groupName);
+      }
+    }
+    return false;
+  }
+}

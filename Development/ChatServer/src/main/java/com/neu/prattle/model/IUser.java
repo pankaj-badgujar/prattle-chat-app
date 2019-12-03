@@ -30,4 +30,11 @@ public interface IUser {
    */
   List<IMember> getGroupsForUser();
 
+  /**
+   * A method to validate if the password is same or not for this user.
+   *
+   * @return true if the password matches else false
+   */
+  boolean isCorrectPassword(String password);
+
 }

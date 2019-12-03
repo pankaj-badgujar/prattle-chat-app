@@ -1,23 +1,32 @@
 package com.neu.prattle.modeltest;
 
+import com.neu.prattle.dao.GroupDao;
+import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
+import com.neu.prattle.exceptions.UserAlreadyPresentException;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
-import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Bhargavi Padhya
@@ -25,48 +34,24 @@ import static org.junit.Assert.assertTrue;
  */
 public class UserTest {
 
+  private MemberServiceImpl memberService;
+
   private final String name = "devansh";
-  private MemberService memberService;
 
   @Before
   public void setup() {
-    memberService = MemberServiceImpl.getInstance();
-  }
-
-  @Test
-  public void testAFindAllMembers() {
-    User bhargavi = new User("bhargavi");
-    User mike = new User("mike");
-    User pranay = new User("pranay");
-
-    List<String> users = new ArrayList<>();
-    users.add("bhargavi");
-    users.add("mike");
-
-    memberService.addUser(bhargavi);
-    memberService.addUser(mike);
-    memberService.addUser(pranay);
-    Group group = new Group("fse", users, new ArrayList<>());
-    memberService.addGroup(group);
-
-    Set<IMember> allMembers = new HashSet<>();
-    allMembers.add(mike);
-    allMembers.add(pranay);
-    allMembers.add(group);
-
-    Set<IMember> im = memberService.findAllMembers("bhargavi");
-    assertTrue("true", memberService.findAllMembers("bhargavi").containsAll(allMembers));
+    memberService = Mockito.mock(MemberServiceImpl.class);
   }
 
   @Test
   public void testUserCreation() {
-    User user = new User(name);
+    User user = new User(name,memberService);
     assertEquals(name, user.getName());
   }
 
   @Test
   public void testUserNameChange() {
-    User user = new User(name);
+    User user = new User(name,memberService);
     assertEquals(name, user.getName());
     String changedName = "Devansh";
     user.setName(changedName);
@@ -76,73 +61,87 @@ public class UserTest {
   @Test
   public void testUsersConnection() {
     String harshilName = "harshil";
-    User devansh = new User("Devansh10");
-    User harshil = new User(harshilName);
-    memberService.addUser(devansh);
-    memberService.addUser(harshil);
+    User devansh = new User(name, memberService);
+    User harshil = new User(harshilName, memberService);
+
+    when(memberService.findMemberByName("devansh")).thenReturn(Optional.of(devansh));
+    when(memberService.findMemberByName("harshil")).thenReturn(Optional.of(harshil));
 
     harshil.connectTo(devansh);
-
     devansh.connectTo(harshil);
 
     assertEquals(devansh.getName(), harshil.getConnectedMembers().get().getName());
     assertEquals(harshilName, devansh.getConnectedMembers().get().getName());
 
-    String pankajName = "Pankaj108";
-    User pankaj = new User(pankajName);
-    memberService.addUser(pankaj);
+    String pankajName = "pankaj";
+    User pankaj = new User(pankajName,memberService);
 
+    when(memberService.findMemberByName("pankaj")).thenReturn(Optional.of(pankaj));
     harshil.connectTo(pankaj);
     assertEquals(pankajName, harshil.getConnectedMembers().get().getName());
   }
 
   @Test(expected = NoSuchUserPresentException.class)
   public void testInvalidConnectedGroups() {
-    User devansh = new User("devansh1");
-    memberService.addUser(devansh);
-    User harshil1 = new User("harshil1");
+    User devansh = new User("devansh",memberService);
+    User harshil = new User("harshil",memberService);
 
     // We are adding an invalid user which is yet not registered which should throw an exception
-    devansh.connectTo(harshil1);
+    when(memberService.findMemberByName("harshil")).thenReturn(Optional.empty());
+    devansh.connectTo(harshil);
   }
 
   @Test
   public void testEqualUsers() {
-    User devansh = new User(name);
+    User devansh = new User(name,memberService);
 
-    User duplicateDevansh = new User(name);
+    User duplicateDevansh = new User(name,memberService);
 
     assertEquals(devansh, duplicateDevansh);
   }
 
   @Test
   public void testNotEqualUsers() {
-    User devansh = new User(name);
-    String devanshID = devansh.getId();
+    User devansh = new User(name, memberService);
+    int devanshID = devansh.getId();
 
-    User duplicateDevansh = new User(name + "1");
+    User duplicateDevansh = new User(name + "1", memberService);
+    int duplicateDevanshID = duplicateDevansh.getId();
 
-    String duplicatDevanshID = duplicateDevansh.getId();
-    assertNotEquals(devanshID, duplicatDevanshID);
+    assertEquals(devanshID, duplicateDevanshID);
 
-    Group group = new Group("test", new ArrayList<>(), new ArrayList<>());
+    Group group = new Group("test", new ArrayList<>(), new ArrayList<>(),memberService);
     assertNotEquals(devansh, duplicateDevansh);
     assertNotEquals(devansh, group);
   }
 
   @Test
   public void testUserHashCode() {
-    User devansh = new User(name);
-    User anotherDevansh = new User(name);
+    User devansh = new User(name,memberService);
+    User anotherDevansh = new User(name,memberService);
 
     assertEquals(devansh.hashCode(), anotherDevansh.hashCode());
   }
 
   @Test
   public void testGetAllMembers() {
-    User harshil = new User("harshil");
+    User harshil = new User("harshil",memberService);
     Set<String> connectedMembers = new HashSet<>();
     connectedMembers.add("harshil");
     assertEquals(connectedMembers, harshil.getAllConnectedMembers());
+  }
+
+  @Test
+  public void isPasswordCorrect(){
+    User harshil = new User("harshil",memberService);
+    Set<String> connectedMembers = new HashSet<>();
+    connectedMembers.add("harshil");
+    assertEquals(connectedMembers, harshil.getAllConnectedMembers());
+  }
+
+  @Test
+  public void getGroupTest(){
+    User harshil = new User("harshil",memberService);
+    assertEquals(new ArrayList<>(),harshil.getGroupsForUser());
   }
 }
