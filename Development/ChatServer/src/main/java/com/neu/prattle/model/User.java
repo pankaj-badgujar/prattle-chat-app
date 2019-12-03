@@ -26,8 +26,8 @@ public class User extends AbstractMember implements IUser {
 
   @Transient
   private IMember connectedTo;
-  @Transient
 
+  @Transient
   private List<IMember> groups;
   private String password;
 
