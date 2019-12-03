@@ -30,6 +30,7 @@ public class User extends AbstractMember implements IUser {
 
   @Transient
   private List<IMember> groups;
+
   private final static Logger logger = Logger.getLogger(User.class);
 
   private String password;
@@ -60,6 +61,23 @@ public class User extends AbstractMember implements IUser {
     this.name = name;
     this.password = password;
     groups = new ArrayList<>();
+  }
+
+  /**
+   * A constructor using which we can create an object of the class {@link User} which takes in the
+   * name of the user.
+   *
+   * @param name The name of the user whose object needs to be created.
+   */
+  public User(String name) {
+    this.name = name;
+    this.connectedTo = null;
+    groups = new ArrayList<>();
+
+    logger.info("User created with the following username: " + name);
+
+    password = "";
+
   }
 
   public User() {
