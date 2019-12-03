@@ -4,7 +4,6 @@ import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.User;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.util.Optional;
@@ -24,8 +23,7 @@ public class SqlUserDao implements UserDao {
 
   private SqlUserDao() {
     Configuration configuration = new Configuration().configure().addAnnotatedClass(User.class);
-    SessionFactory sf = configuration.buildSessionFactory();
-    this.session = sf.openSession();
+    this.session = configuration.buildSessionFactory().openSession();
   }
 
   public static UserDao getInstance() {
@@ -42,5 +40,10 @@ public class SqlUserDao implements UserDao {
   @Override
   public Optional<IMember> getUser(String username) {
     return Optional.ofNullable(session.get(User.class, username));
+  }
+
+  @Override
+  public boolean removeUser(String name) {
+    return false;
   }
 }

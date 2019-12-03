@@ -3,7 +3,6 @@ package com.neu.prattle.model;
 import com.neu.prattle.service.MemberService;
 import com.neu.prattle.service.MemberServiceImpl;
 
-import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,20 +19,17 @@ public abstract class AbstractMember implements IMember {
   @GeneratedValue(strategy = GenerationType.AUTO)
   protected int id;
 
-  @Column(unique = true)
-  protected String name;
+  protected String name = null;
 
   @Transient
-  protected MemberService ms;
+  protected transient MemberService ms;
 
-  public AbstractMember() {
+  AbstractMember() {
     this.ms = MemberServiceImpl.getInstance();
-    this.name = null;
   }
 
-  public AbstractMember(MemberService ms) {
-    this.ms = ms;
-    this.name = null;
+  AbstractMember(MemberService memberService) {
+    this.ms = memberService;
   }
 
   @Override

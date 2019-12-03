@@ -243,6 +243,30 @@ public class GroupTest {
     assertEquals(userName, group.getAllConnectedMembers());
   }
 
+  @Test
+  public void testSetMembers() {
+
+    users = new ArrayList<>();
+    users.add(harshilName);
+
+    admins = new ArrayList<>();
+    admins.add(harshilName);
+
+    group = new Group("FSE1", users, admins, memberService);
+
+    users = new ArrayList<>();
+    users.add(devanshName);
+
+    admins = new ArrayList<>();
+    admins.add(devanshName);
+    Group group2 = new Group("FSE2", users, admins, memberService);
+
+    group.setGroupsForUser(group2);
+    List<IMember> value = new ArrayList<>();
+    value.add(group);
+    assertEquals(value, harshil.getGroupsForUser());
+  }
+
   @Test(expected = NoSuchUserPresentException.class)
   public void testInvalidMemberGroup() {
 

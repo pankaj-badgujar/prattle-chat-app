@@ -211,7 +211,7 @@ public class Group extends AbstractMember implements IGroup {
 
   @Override
   public IMemberDTO getDTO() {
-    return new GroupDTO(this.id,this.name, this.admins, this.users);
+    return new GroupDTO(this.id, this.name, this.admins, this.users);
   }
 
   @Override

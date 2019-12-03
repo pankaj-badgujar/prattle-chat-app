@@ -1,9 +1,7 @@
 package com.neu.prattle.daotest;
 
-import com.neu.prattle.dao.GroupDao;
 import com.neu.prattle.dao.SqlGroupDao;
 import com.neu.prattle.dao.SqlUserDao;
-import com.neu.prattle.dao.UserDao;
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.User;
 import com.neu.prattle.service.MemberServiceImpl;
@@ -11,15 +9,13 @@ import com.neu.prattle.service.MemberServiceImpl;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static junit.framework.TestCase.assertNotNull;
-
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -50,4 +46,35 @@ public class SqlDaoTest {
     User test = new User("FSE", memberService);
     assertNotNull(dao.createUser(test));
   }
+
+  @Test
+  public void testUserDaoFindInstantiation() {
+    when(session.get(User.class, "devansh")).thenReturn(new User("devansh", memberService));
+    SqlUserDao dao = new SqlUserDao(session);
+    assertNotNull(dao.getUser("devansh"));
+  }
+
+  @Test
+  public void testGroupDaoFindInstantiation() {
+    when(session.get(Group.class, "devansh")).thenReturn(new Group("devansh",
+            new ArrayList<>(), new ArrayList<>(), memberService));
+    SqlGroupDao dao = new SqlGroupDao(session);
+    assertNotNull(dao.findGroup("devansh"));
+  }
+
+  @Test
+  public void testUserDaoDeleteInstantiation() {
+    when(session.get(User.class, "devansh")).thenReturn(new User("devansh", memberService));
+    SqlUserDao dao = new SqlUserDao(session);
+    assertFalse(dao.removeUser("devansh"));
+  }
+
+  @Test
+  public void testGroupDaoDeleteInstantiation() {
+    when(session.get(Group.class, "devansh")).thenReturn(new Group("devansh",
+            new ArrayList<>(), new ArrayList<>(), memberService));
+    SqlGroupDao dao = new SqlGroupDao(session);
+    assertFalse(dao.removeGroup("devansh"));
+  }
+
 }

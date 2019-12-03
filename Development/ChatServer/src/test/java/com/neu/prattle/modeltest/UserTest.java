@@ -138,4 +138,10 @@ public class UserTest {
     connectedMembers.add("harshil");
     assertEquals(connectedMembers, harshil.getAllConnectedMembers());
   }
+
+  @Test
+  public void getGroupTest(){
+    User harshil = new User("harshil",memberService);
+    assertEquals(new ArrayList<>(),harshil.getGroupsForUser());
+  }
 }

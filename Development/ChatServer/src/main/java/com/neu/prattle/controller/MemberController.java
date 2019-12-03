@@ -143,6 +143,7 @@ public class MemberController {
       IGroup group = (IGroup) groupEntity.get();
       try {
         memberName.forEach(member -> group.addUser(adminName, member));
+        return Response.status(200).build();
       } catch (InvalidAdminException e) {
         return Response.status(401).build();
       } catch (NoSuchUserPresentException e) {
@@ -234,6 +235,7 @@ public class MemberController {
       IGroup group = (IGroup) groupEntity.get();
       try {
         memberName.forEach(member -> group.removeAdmin(adminName, member));
+        return Response.ok().build();
       } catch (InvalidAdminException e) {
         return Response.status(401).build();
       } catch (NoSuchUserPresentException e) {

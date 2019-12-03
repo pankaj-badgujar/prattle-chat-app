@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 /**
  * Implementation for the interface {@link MemberService} which holds all the members for the
  * application is a singleton class.
@@ -32,16 +30,17 @@ public class MemberServiceImpl implements MemberService {
   private final List<IMember> groups = new ArrayList<>();
   private static MemberService memberService;
 
-  @Inject
   private UserDao userDao;
-
-  @Inject
   private GroupDao groupDao;
 
 
   private MemberServiceImpl() {
-    userDao = SqlUserDao.getInstance();
-    groupDao = SqlGroupDao.getInstance();
+    userDao = SqlUserDao.getInstance();groupDao = SqlGroupDao.getInstance();
+  }
+
+  MemberServiceImpl(UserDao userDao, GroupDao groupDao) {
+    this.userDao = userDao;
+    this.groupDao = groupDao;
   }
 
   @Override
@@ -61,8 +60,7 @@ public class MemberServiceImpl implements MemberService {
               user.getName()));
     }
     this.users.add(user);
-    userDao.createUser(user);
-    return user;
+    return userDao.createUser(user);
   }
 
   /**
@@ -84,9 +82,7 @@ public class MemberServiceImpl implements MemberService {
    * @return this
    */
   public static MemberService getInstance() {
-    if (memberService == null) {
-      memberService = new MemberServiceImpl();
-    }
+    memberService = memberService == null ? new MemberServiceImpl() : memberService;
     return memberService;
   }
 
@@ -110,14 +106,11 @@ public class MemberServiceImpl implements MemberService {
   public boolean deleteGroup(String groupName, String adminName) {
     Optional<IMember> groupObject = groupDao.findGroup(groupName);
     if (groupObject.isPresent()) {
-      //Ask harshil to change the return type to IGroup
       IGroup group = (IGroup) groupObject.get();
       if (group.getAdmins().contains(adminName)) {
         return groupDao.removeGroup(groupName);
       }
-      return false;
-    } else {
-      return false;
     }
+    return false;
   }
 }

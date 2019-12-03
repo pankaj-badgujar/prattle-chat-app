@@ -2,15 +2,11 @@ package com.neu.prattle.dao;
 
 import com.neu.prattle.model.Group;
 import com.neu.prattle.model.IMember;
-import com.neu.prattle.model.User;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.util.Optional;
-
-import javax.inject.Inject;
 
 /**
  * Concrete implementation of the group dao. This implementation uses a sql databse.
@@ -18,7 +14,7 @@ import javax.inject.Inject;
  * @author Harshil Mavani
  * @version 1.0 dated 11/27/2019
  */
-public class SqlGroupDao implements GroupDao{
+public class SqlGroupDao implements GroupDao {
 
   private static SqlGroupDao groupDao;
   private Session session;
@@ -28,8 +24,7 @@ public class SqlGroupDao implements GroupDao{
    */
   private SqlGroupDao() {
     Configuration configuration = new Configuration().configure().addAnnotatedClass(Group.class);
-    SessionFactory sf = configuration.buildSessionFactory();
-    this.session = sf.openSession();
+    this.session = configuration.buildSessionFactory().openSession();
   }
 
   public SqlGroupDao(Session session) {
@@ -38,12 +33,11 @@ public class SqlGroupDao implements GroupDao{
 
   /**
    * A public method to return the singleton instance.
+   *
    * @return Singleton instance created by sql group dao.
    */
   public static SqlGroupDao getInstance() {
-    if(groupDao == null) {
-      groupDao = new SqlGroupDao();
-    }
+    groupDao = groupDao == null ? new SqlGroupDao() : groupDao;
     return groupDao;
   }
 

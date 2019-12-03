@@ -26,15 +26,15 @@ public class User extends AbstractMember implements IUser {
 
   @Transient
   private IMember connectedTo;
-
   @Transient
+
   private List<IMember> groups;
   private String password;
 
 
   @Override
   public IMemberDTO getDTO() {
-    return new UserDTO(this.id,this.name, this.connectedTo, this.groups);
+    return new UserDTO(this.id, this.name, this.connectedTo, this.groups);
   }
 
   /**
@@ -56,19 +56,6 @@ public class User extends AbstractMember implements IUser {
     this.name = name;
     this.password = password;
     groups = new ArrayList<>();
-  }
-
-  /**
-   * A constructor using which we can create an object of the class {@link User} which takes in the
-   * name of the user.
-   *
-   * @param name The name of the user whose object needs to be created.
-   */
-  public User(String name) {
-    this.name = name;
-    this.connectedTo = null;
-    groups = new ArrayList<>();
-    password = "";
   }
 
   public User() {
