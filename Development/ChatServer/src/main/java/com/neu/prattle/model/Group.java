@@ -4,6 +4,9 @@ import com.neu.prattle.exceptions.InvalidAdminException;
 import com.neu.prattle.exceptions.NoSuchUserPresentException;
 import com.neu.prattle.service.MemberService;
 
+import com.neu.prattle.utils.PrattleLogger;
+import javax.sound.sampled.LineEvent;
+import org.apache.log4j.Level;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.persistence.ElementCollection;
@@ -33,6 +37,7 @@ public class Group extends AbstractMember implements IGroup {
   private List<String> users;
   @ElementCollection
   private List<String> admins;
+
   @Transient
   private Set<IMember> userMember;
   @Transient
@@ -51,7 +56,7 @@ public class Group extends AbstractMember implements IGroup {
    * @param admins List of admins in the group that have privileges above normal users.
    */
   public Group(@JsonProperty("name") String name, @JsonProperty("users") List<String> users,
-               @JsonProperty("admins") List<String> admins) {
+      @JsonProperty("admins") List<String> admins) {
     this.initializeFields(name, users, admins);
   }
 
@@ -74,6 +79,17 @@ public class Group extends AbstractMember implements IGroup {
     this.setName(name);
     this.users = new ArrayList<>(users);
     this.admins = new ArrayList<>(admins);
+
+    PrattleLogger.log("Group created with the following name: " + name, Level.INFO);
+    PrattleLogger.log("Following are the users added to the group: " + name, Level.INFO);
+    for (String u : users) {
+      PrattleLogger.log(u, Level.INFO);
+    }
+    PrattleLogger.log("Following are the existing admins for the group:" + name, Level.INFO);
+    for (String a : admins) {
+      PrattleLogger.log(a, Level.INFO);
+    }
+
     this.userMember = getAllIMembers(users);
     this.adminsMember = getAllIMembers(admins);
   }
@@ -105,7 +121,7 @@ public class Group extends AbstractMember implements IGroup {
   }
 
   public Group() {
-
+    PrattleLogger.log("A group was created.", Level.INFO);
   }
 
   public Group(String name, Set<IMember> users, Set<IMember> admins, MemberService ms) {
@@ -117,6 +133,7 @@ public class Group extends AbstractMember implements IGroup {
     members.forEach(member -> {
       Optional<IMember> validateUser = this.ms.findMemberByName(member.getName());
       if (!validateUser.isPresent()) {
+        PrattleLogger.log(member.getName() + " is not a valid user.", Level.INFO);
         throw new NoSuchUserPresentException(member.getName() + " is not a valid user.");
       }
     });
@@ -139,12 +156,15 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateUser(user);
     this.users.add(user);
+    PrattleLogger.log(admin + " added " + user + " to the group " + this.getName(), Level.INFO);
   }
 
   @Override
   public void removeUser(String admin, String userName) {
     this.validateAdmin(admin);
     this.users.remove(userName);
+    PrattleLogger
+        .log(admin + " removed " + userName + " from the group " + this.getName(), Level.INFO);
     this.admins.remove(userName);
     Optional<IMember> memberEntity = this.ms.findMemberByName(userName);
     validateMember(memberEntity, userName);
@@ -157,6 +177,8 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateUser(adminName);
     this.admins.add(adminName);
+    PrattleLogger.log(admin + " made " + adminName + ", an admin of the group " + this.getName(),
+        Level.INFO);
     Optional<IMember> adminMember = this.ms.findMemberByName(adminName);
     validateMember(adminMember, adminName);
     adminMember.ifPresent(member -> this.adminsMember.add(member));
@@ -164,6 +186,7 @@ public class Group extends AbstractMember implements IGroup {
 
   private void validateMember(Optional<IMember> member, String name) {
     if (!member.isPresent()) {
+      PrattleLogger.log("Invalid user: " + name, Level.INFO);
       throw new NoSuchUserPresentException(name);
     }
   }
@@ -173,6 +196,8 @@ public class Group extends AbstractMember implements IGroup {
     this.validateAdmin(admin);
     this.validateAdmin(adminToBeRemoved);
     this.admins.remove(adminToBeRemoved);
+    PrattleLogger
+        .log(admin + " cancelled admin rights for the admin, " + adminToBeRemoved, Level.INFO);
     Optional<IMember> adminMember = this.ms.findMemberByName(adminToBeRemoved);
     validateMember(adminMember, adminToBeRemoved);
     adminMember.ifPresent(member -> this.adminsMember.remove(member));
@@ -197,6 +222,7 @@ public class Group extends AbstractMember implements IGroup {
    */
   private void validateAdmin(String admin) {
     if (!this.admins.contains(admin)) {
+      PrattleLogger.log(admin + " is not the admin of the group " + this.getName(), Level.INFO);
       throw new InvalidAdminException(admin + " is not an admin of " + this.name + " group");
     }
   }
@@ -205,7 +231,8 @@ public class Group extends AbstractMember implements IGroup {
     AtomicBoolean validate = new AtomicBoolean(false);
     this.ms.findMemberByName(user).ifPresent(member -> validate.set(true));
     if (!validate.get()) {
-      throw new NoSuchUserPresentException("User with name user does not exist");
+      PrattleLogger.log("Invalid user: " + user, Level.INFO);
+      throw new NoSuchUserPresentException("User with name " + user + " does not exist");
     }
   }
 
@@ -233,7 +260,7 @@ public class Group extends AbstractMember implements IGroup {
     users.forEach(member -> {
       Optional<IMember> eachMember = this.ms.findMemberByName(member);
       eachMember.ifPresent(memberInternal ->
-              allConnectedMembers.addAll(memberInternal.getAllConnectedMembers()));
+          allConnectedMembers.addAll(memberInternal.getAllConnectedMembers()));
     });
     return allConnectedMembers;
   }

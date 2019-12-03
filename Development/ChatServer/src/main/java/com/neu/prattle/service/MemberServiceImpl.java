@@ -11,11 +11,14 @@ import com.neu.prattle.model.IMember;
 import com.neu.prattle.model.IUser;
 import com.neu.prattle.model.User;
 
+import com.neu.prattle.utils.PrattleLogger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Implementation for the interface {@link MemberService} which holds all the members for the
@@ -50,16 +53,19 @@ public class MemberServiceImpl implements MemberService {
               group.getName()));
     }
     this.groups.add(group);
+    PrattleLogger.log("Group with the following name created: "+ group.getName(), Level.INFO);
     groupDao.createGroup(group);
   }
 
   @Override
   public synchronized User addUser(User user) {
     if (this.users.contains(user)) {
+      PrattleLogger.log("User with the name "+user.getName()+" already exists.", Level.INFO);
       throw new UserAlreadyPresentException(String.format("User already present with name: %s",
               user.getName()));
     }
     this.users.add(user);
+    PrattleLogger.log("User with the following username created: "+ user.getName(), Level.INFO);
     return userDao.createUser(user);
   }
 
